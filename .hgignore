@@ -1,0 +1,20 @@
+syntax: regexp
+
+# test files
+^\.tox$
+^junit-\w+\.xml$
+
+# build files
+^build$
+^dist$
+^.*\.egg-info$
+
+# project files
+^\.idea$
+^\.(pydev)?project$
+
+syntax: glob
+
+# compiled python files
+*.pyc
+*.pyo
