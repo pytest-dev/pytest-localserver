@@ -31,7 +31,7 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
         if self.server_address[1] == 0: 
             self.server_address = (self.server_address[0], self.server_port)
 
-        self.file, self.code = (None, 204) # HTTP 204: No Content
+        self.content, self.code = (None, 204) # HTTP 204: No Content
         self.logging = False
 
         # initialise thread
@@ -57,12 +57,12 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
         self.shutdown()
         self.join(timeout)
 
-    def serve_file(self, path=None, code=200):
+    def serve_content(self, content, code=200):
         """
-        Serves file (with specified HTTP error code) as response to next 
-        request.
+        Serves string content (with specified HTTP error code) as response to
+        all subsequent request.
         """
-        self.file, self.code = (path, code)
+        self.content, self.code = (content, code)
 
 
 class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -86,12 +86,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         """
         self.send_response(self.server.code)
         self.end_headers()
-        
-        if isinstance(self.server.file, basestring):
-            self.wfile.write(open(self.server.file).read())
-        else:
-            self.wfile.write(self.server.file)
-            
+        self.wfile.write(self.server.content)
         return
 
 
@@ -105,7 +100,7 @@ if __name__ == '__main__':
     print 'HTTP server is running at http://%s:%i' % (server.server_address)
     print 'Type <Ctrl-C> to stop'
     
-    server.serve_file(__file__, 302)
+    server.serve_content(open(__file__).read(), 302)
     
     try:
         while True: 
