@@ -115,16 +115,23 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
+    import os.path
     import time
 
     server = Server()
     server.start()
     server.logging = True
-    
+
     print 'HTTP server is running at http://%s:%i' % (server.server_address)
     print 'Type <Ctrl-C> to stop'
-    
-    server.serve_content(open(__file__).read(), 302)
+
+    try:
+        path = sys.argv[1]
+    except IndexError:
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), '..', 'README')
+
+    server.serve_content(open(path).read(), 302)
     
     try:
         while True: 
@@ -132,4 +139,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print '\rstopping...'
     server.stop()
-    
