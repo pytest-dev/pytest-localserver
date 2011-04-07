@@ -19,6 +19,12 @@ class Server (smtpd.SMTPServer, threading.Thread):
         if self._localaddr[1] == 0:
             self.addr = self.getsockname()
 
+        # if no root dir for Maildir is specified
+        # use system's tmp dir
+        if rootdir is None:
+            import tempfile
+            rootdir = tempfile.gettempdir()
+
         assert os.path.isdir(rootdir), \
             'Make sure that directory %s exists!' % rootdir
         self.outbox = Maildir(os.path.join(rootdir, 'Maildir'), None, True)
@@ -50,7 +56,7 @@ if __name__ == "__main__":
     server = Server()
     server.start()
 
-    print 'SMTP server is running at %s:%i' % (server.addr)
+    print 'SMTP server is running on %s:%i' % (server.addr)
     print 'Type <Ctrl-C> to stop'
 
     try:
