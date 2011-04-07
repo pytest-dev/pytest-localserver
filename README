@@ -1,0 +1,111 @@
+==================
+pytest-localserver
+==================
+
+Sometimes `monkeypatching`_ ``urlopen()`` just does not cut it, for instance if
+you work with ``Request`` or use your own handlers. In these cases it may come
+in handy to have an HTTP server running locally which behaves just like the real
+thing [1]_. Well, look no further!
+
+pytest-localserver is a plugin for the `pytest`_ testing framework. It enables
+you to write tests like the following::
+
+    def test_retrieve_some_content(httpserver):
+        httpserver.serve_content(open('cached-content.xml').read())
+        assert my_content_retrieval(httpserver.url) == 'Found it!'
+
+    def test_content_retrieval_fails_graciously(httpserver):
+        httpserver.serve_content('File not found!', 404)
+        pytest.raises(MyCustomException, my_content_retrieval, httpserver.url)
+
+Additionally, it is also possible to simulate SMTP servers::
+
+    def test_sending_some_message(smtpserver):
+        mailer = MyMailer(host=smtpserver.addr[0], port=smtpserver.addr[1])
+        mailer.send(to='bob@example.com', from='alice@example.com',
+            subject='MyMailer v1.0', body='Check out my mailer!')
+        assert len(smtpserver.outbox)==1
+
+It is really that easy!
+
+Available funcargs
+==================
+
+``httpserver``
+    provides a threaded HTTP server instance running on localhost. It has the
+    following attributes:
+
+    * ``code`` - HTTP response code (int)
+    * ``content`` - content of next response (str)
+    * ``headers`` - response headers (dict)
+
+    Once these attribute are set, all subsequent requests will be answered with
+    these values until they are changed or the server is stopped. A more 
+    convenient way to change these is ::
+
+        httpserver.server_content(content=None, code=200, headers=None) 
+
+    The server address can be found in property
+
+    * ``url``
+
+    which is the string representation of tuple ``server_address`` (host as str,
+    port as int).
+
+``smtpserver``
+    provides a threaded instance of ``smtpd.SMTPServer`` runnning on localhost.
+    It has the following attributes:
+
+    * ``addr`` - server address as tuple (host as str, port as int)
+    * ``outbox`` - a ``mailbox.Maildir`` instance containing all sent messages.
+      It will live a temporary directory created with `tmpdir`_.
+
+Download and Installation
+=========================
+
+You can install the plugin by running ::
+
+    pip install pytest-localserver
+
+Alternatively, get the latest stable version from `PyPI`_ or the latest
+`bleeding-edge archive`_ from bitbucket.org.
+
+License and Credits
+===================
+
+This plugin is released under the MIT license. You can find the full text of
+the license in the LICENSE file.
+
+Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
+
+I borrowed some implementation ideas for the httpserver from `linkchecker`_.
+The implementation for the SMTP server is based on the `Mailsink recipe`_ by 
+Adam Feuer, Matt Branthwaite and Troy Frever.
+
+Development and future plans
+============================
+
+Feel free to clone the repository and add your own changes. Pull requests are
+always welcome!::
+
+    hg clone https://bitbucket.org/basti/pytest-localserver
+
+I already have a couple of ideas for future versions:
+
+* support for HTTPS, FTP, SSH (maybe base all on twisted?)
+* making the outbox as convenient to use as ``django.core.mail.outbox``
+* add your own here!
+
+.. [1] The idea for this project was born when I needed to check that `a piece
+       of software`_ behaved itself when receiving HTTP error codes 404 and 500.
+       Having unsuccessfully tried to mock a server, I stumbled across 
+       `linkchecker`_ which uses a the same idea to test its internals.
+
+.. _monkeypatching: http://pytest.org/monkeypatch.html
+.. _pytest: http://pytest.org/
+.. _tmpdir: http://pytest.org/tmpdir.html
+.. _linkchecker: http://linkchecker.sourceforge.net/
+.. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
+.. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
+.. _bleeding-edge archive: https://bitbucket.org/basti/pytest-localserver/get/tip.tar.gz
+.. _Mailsink recipe: http://code.activestate.com/recipes/440690/
