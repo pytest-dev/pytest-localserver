@@ -25,13 +25,14 @@ def test_some_content_retrieval(server):
     assert resp.code == 200
 
 def test_GET_request(server):
-    server.serve_content('TEST!')
+    server.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     req = urllib2.Request(server.url)
     req.add_header('User-Agent', 'Test method')
     req.add_header('Accept-encoding', 'gzip')
     resp = urllib2.urlopen(req)
     assert resp.read() == 'TEST!'
     assert resp.code == 200
+    assert resp.headers.getheader('Content-type') == 'text/plain'
 
 
 def test_httpserver_funcarg(httpserver):

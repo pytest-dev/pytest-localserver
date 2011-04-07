@@ -7,6 +7,8 @@ import BaseHTTPServer
 import sys
 import threading
 
+import pytest_localserver
+
 class Server (BaseHTTPServer.HTTPServer, threading.Thread):
 
     """
@@ -32,6 +34,7 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
             self.server_address = (self.server_address[0], self.server_port)
 
         self.content, self.code = (None, 204) # HTTP 204: No Content
+        self.headers = {}
         self.logging = False
 
         # initialise thread
@@ -57,12 +60,14 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
         self.shutdown()
         self.join(timeout)
 
-    def serve_content(self, content, code=200):
+    def serve_content(self, content, code=200, headers=None):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
         """
         self.content, self.code = (content, code)
+        if headers: 
+            self.headers = headers
 
 
 class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -71,6 +76,11 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     Handler for HTTP requests serving files specified by server instance.
     """
     
+    # The server software version.  You may want to override this.
+    # The format is multiple whitespace-separated strings,
+    # where each string is of the form name[/version].
+    server_version = 'pytest_localserver.http/%s' % pytest_localserver.VERSION
+
     def log_message(self, format, *args):
         """
         Overrides standard logging method.
@@ -78,16 +88,30 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if self.server.logging:
             sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(), 
                 self.log_date_time_string(), format % args))
-        
-    def do_GET(self):
+
+    def send_head(self):
         """
-        Any GET response will be sent ``self.server.file`` as message and 
-        ``self.server.code`` as response code.
+        Common code for GET and HEAD commands. This sends the response code and
+        other headers (like MIME type).
         """
         self.send_response(self.server.code)
+        for key, val in self.server.headers.items():
+            self.send_header(key, val)
         self.end_headers()
+
+    def do_HEAD(self):
+        """
+        Serve a HEAD request.
+        """
+        self.send_head()
+
+    def do_GET(self):
+        """
+        Serve a GET request. Response will be ``self.server.content`` as
+        message.
+        """
+        self.send_head()
         self.wfile.write(self.server.content)
-        return
 
 
 if __name__ == '__main__':
