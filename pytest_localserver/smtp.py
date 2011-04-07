@@ -18,8 +18,10 @@ class Server (smtpd.SMTPServer, threading.Thread):
         smtpd.SMTPServer.__init__(self, (host, port), None)
         if self._localaddr[1] == 0:
             self.addr = self.getsockname()
-        self.mailroot = rootdir
-        self.maildirs = {}
+
+        assert os.path.isdir(rootdir), \
+            'Make sure that directory %s exists!' % rootdir
+        self.outbox = Maildir(os.path.join(rootdir, 'Maildir'), None, True)
 
         # initialise thread
         self._stopevent = threading.Event()
@@ -27,15 +29,8 @@ class Server (smtpd.SMTPServer, threading.Thread):
         threading.Thread.__init__(self, name=self.threadName)
 
     def process_message(self, peer, mailfrom, rcpttos, data):
-        import sys
-        sys.stderr.write('process_message(%r, %r, %r, %r)\n' % (peer, mailfrom, rcpttos, data))
         msg = email.message_from_string(data)
-        for recp in rcpttos:
-            if not recp.lower() in self.maildirs:
-                self.maildirs[recp.lower()] = Maildir(
-                    os.path.join(self.mailroot, recp.lower()), None, True)
-            maildir = self.maildirs[recp.lower()]
-            maildir.add(msg)
+        self.outbox.add(msg)
 
     def run(self):
         while not self._stopevent.is_set():
@@ -48,10 +43,6 @@ class Server (smtpd.SMTPServer, threading.Thread):
 
     def __repr__(self):
         return '<smtp.Server %s:%s>' % self.addr
-
-    def mailcount(self):
-        print self.maildirs.values()
-        return sum(len(inbox) for inbox in self.maildirs.values())
 
 if __name__ == "__main__":
     import time
