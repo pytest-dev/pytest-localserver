@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 import pytest
 
-from pytest_localserver import smtp
+from pytest_localserver import plugin, smtp
 
 def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
     """
@@ -24,11 +24,27 @@ def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
     server.sendmail(from_, to, msg.as_string())
     server.quit()
 
+def pytest_funcarg__smtpserver(request):
+    # define funcargs here again in order to run tests without having to 
+    # install the plugin anew every single time
+    return plugin.pytest_funcarg__smtpserver(request)
+
+def test_smtpserver_funcarg(smtpserver):
+    assert isinstance(smtpserver, smtp.Server)
+    assert smtpserver.is_alive()
+    assert smtpserver.accepting and smtpserver.addr
+
+def test_init_smtpserver(tmpdir):
+    missing = tmpdir.mkdir('exists')
+    assert missing.check(dir=True, exists=True)
+    server = smtp.Server(rootdir=missing.strpath)
+    assert len(server.outbox) == 0
+
 def test_init_smtpserver_with_missing_rootdir_fails(tmpdir):
     missing = tmpdir.join('missing')
     assert not missing.check(dir=True, exists=True)
     pytest.raises(AssertionError, smtp.Server, rootdir=missing.strpath)
-    
+
 def test_send_email(smtpserver):
     assert len(smtpserver.outbox) == 0
     # one mail is being sent
@@ -42,10 +58,4 @@ def test_send_email(smtpserver):
         smtpserver.addr)
     # two mails are now in outbox
     assert len(smtpserver.outbox) == 2
-
-def test_smtpserver_funcarg(smtpserver):
-    assert isinstance(smtpserver, smtp.Server)
-    assert smtpserver.is_alive()
-    assert smtpserver.accepting and smtpserver.addr
-    assert len(smtpserver.outbox) == 0
 
