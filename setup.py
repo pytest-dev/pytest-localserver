@@ -13,7 +13,7 @@ setup(
     version = pytest_localserver.VERSION,
     description = 'py.test plugin to test server connections locally.',
     long_description=read('README'),
-    license = 'bsd',
+    license = 'mit',
 
     author = 'Sebastian Rahlf',
     author_email = 'basti AT redtoad DOT de',
