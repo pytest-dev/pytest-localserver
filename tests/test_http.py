@@ -1,7 +1,9 @@
+import httplib
 import StringIO
 import urllib2
 
 from pytest_localserver import http, plugin
+from pytest_localserver import VERSION
 
 def pytest_funcarg__httpserver(request):
     # define funcargs here again in order to run tests without having to 
@@ -37,4 +39,13 @@ def test_GET_request(httpserver):
     assert resp.read() == 'TEST!'
     assert resp.code == 200
     assert resp.headers.getheader('Content-type') == 'text/plain'
+
+def test_HEAD_request(httpserver):
+    httpserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
+    conn = httplib.HTTPConnection('%s:%i' % httpserver.server_address)
+    conn.request('HEAD', '/')
+    resp = conn.getresponse()
+    assert resp.status == 200
+    assert resp.getheader('Content-type') == 'text/plain'
+    assert VERSION in resp.getheader('server')
 
