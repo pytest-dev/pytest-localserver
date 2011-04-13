@@ -1,3 +1,8 @@
+# Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
+#
+# This program is release under the MIT license. You can find the full text of
+# the license in the LICENSE file.
+
 import py
 
 from pytest_localserver import http, smtp

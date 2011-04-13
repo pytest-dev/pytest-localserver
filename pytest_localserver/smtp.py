@@ -1,7 +1,8 @@
+# Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
 # with some ideas from http://code.activestate.com/recipes/440690/
 # SmtpMailsink Copyright 2005 Aviarc Corporation
 # Written by Adam Feuer, Matt Branthwaite, and Troy Frever
-# Licensed under the PSF License
+# which is Licensed under the PSF License
 
 import asyncore
 import email
