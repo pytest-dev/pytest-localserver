@@ -1,0 +1,10 @@
+0.1.1 (2011-04-15)
+------------------
+
+Support for Python 2.5. The HTTP server also works under Python 2.4. This partly
+fixes issue #1.
+
+0.1 (2011-04-07)
+----------------
+
+Initial release.
