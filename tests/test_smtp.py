@@ -1,6 +1,6 @@
 
 import smtplib
-from email.mime.text import MIMEText
+from email.MIMEText import MIMEText
 import pytest
 
 from pytest_localserver import plugin, smtp

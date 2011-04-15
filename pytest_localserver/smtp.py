@@ -7,11 +7,26 @@
 import asyncore
 import email
 from mailbox import Maildir
-import smtpd
-import threading
 import os
+import smtpd
+import sys
+import threading
 
 class Server (smtpd.SMTPServer, threading.Thread):
+
+    """
+    Small SMTP test server. Try the following snippet for sending mail::
+
+        server = Server(port=8080)
+        server.start()
+        print 'SMTP server is running on %s:%i' % server.addr
+
+        # any e-mail sent to localhost:8080 will end up in server.outbox
+        # ...
+
+        server.stop()
+
+    """
 
     WAIT_BETWEEN_CHECKS = 0.001
 
@@ -28,42 +43,80 @@ class Server (smtpd.SMTPServer, threading.Thread):
 
         assert os.path.isdir(rootdir), \
             'Make sure that directory %s exists!' % rootdir
-        self.outbox = Maildir(os.path.join(rootdir, 'Maildir'), None, True)
+        try:
+            self.outbox = Maildir(os.path.join(rootdir, 'Maildir'), None, True)
+        except TypeError:
+            root = os.path.join(rootdir, 'Maildir')
+            os.mkdir(root)
+            for folder in ('new', 'cur', 'tmp'):
+                os.mkdir(os.path.join(root, folder))
+            self.outbox = Maildir(root, None)
 
         # initialise thread
         self._stopevent = threading.Event()
         self.threadName = self.__class__.__name__
         threading.Thread.__init__(self, name=self.threadName)
 
+        # support for Python 2.4 and 2.5
+        if sys.version_info[:2] < (2, 6):
+            self._stopevent.is_set = self._stopevent.isSet
+            self.is_alive = self.isAlive
+
+        # support for Python 2.4
+        if not hasattr(self.outbox, '__len__'):
+            self.outbox.__len__ = lambda: len([msg for msg in self.outbox])
+
     def process_message(self, peer, mailfrom, rcpttos, data):
+        """
+        Adds message to outbox.
+        """
         msg = email.message_from_string(data)
         self.outbox.add(msg)
 
     def run(self):
+        """
+        Threads run method.
+        """
         while not self._stopevent.is_set():
             asyncore.loop(timeout=self.WAIT_BETWEEN_CHECKS, count=1)
 
     def stop(self, timeout=None):
+        """
+        Stops test server.
+
+        :param timeout: When the timeout argument is present and not None, it
+        should be a floating point number specifying a timeout for the operation
+        in seconds (or fractions thereof).
+        """
         self._stopevent.set()
         threading.Thread.join(self, timeout)
         self.close()
+
+    def __del__(self):
+        self.stop()
 
     def __repr__(self):
         return '<smtp.Server %s:%s>' % self.addr
 
 if __name__ == "__main__":
     import time
-    
+
     server = Server()
     server.start()
 
-    print 'SMTP server is running on %s:%i' % (server.addr)
+    print 'SMTP server is running on %s:%i' % server.addr
     print 'Type <Ctrl-C> to stop'
 
     try:
-        while True: 
-            time.sleep(1)
+
+        try:
+            while True:
+                time.sleep(1)
+        finally:
+            print '\rstopping...'
+            server.stop()
+
     except KeyboardInterrupt:
-        print '\rstopping...'
-    finally:
-        server.stop()
+        # support for Python 2.4 dictates that try ... finally is not used
+        # together with any except statements
+        pass
