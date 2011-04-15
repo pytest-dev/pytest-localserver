@@ -2,10 +2,11 @@
 pytest-localserver
 ==================
 
-Sometimes `monkeypatching`_ ``urlopen()`` just does not cut it, for instance if
-you work with ``Request`` or use your own handlers. In these cases it may come
-in handy to have an HTTP server running locally which behaves just like the real
-thing [1]_. Well, look no further!
+Sometimes `monkeypatching`_ ``urllib2.urlopen()`` just does not cut it, for
+instance if you work with ``urllib2.Request``, define your own openers/handlers
+or work with ``httplib``. In these cases it may come in handy to have an HTTP
+server running locally which behaves just like the real thing [1]_. Well, look
+no further!
 
 pytest-localserver is a plugin for the `pytest`_ testing framework. It enables
 you to write tests like the following::
@@ -22,7 +23,7 @@ Additionally, it is also possible to simulate SMTP servers::
 
     def test_sending_some_message(smtpserver):
         mailer = MyMailer(host=smtpserver.addr[0], port=smtpserver.addr[1])
-        mailer.send(to='bob@example.com', from='alice@example.com',
+        mailer.send(to='bob@example.com', from_='alice@example.com',
             subject='MyMailer v1.0', body='Check out my mailer!')
         assert len(smtpserver.outbox)==1
 
@@ -90,11 +91,15 @@ always welcome!::
 
     hg clone https://bitbucket.org/basti/pytest-localserver
 
+If you find any bugs, please file a `report`_.
+
 I already have a couple of ideas for future versions:
 
 * support for HTTPS, FTP, SSH (maybe base all on twisted?)
-* making the outbox as convenient to use as ``django.core.mail.outbox``
+* making the SMTP outbox as convenient to use as ``django.core.mail.outbox``
 * add your own here!
+
+----
 
 .. [1] The idea for this project was born when I needed to check that `a piece
        of software`_ behaved itself when receiving HTTP error codes 404 and 500.
@@ -105,7 +110,8 @@ I already have a couple of ideas for future versions:
 .. _pytest: http://pytest.org/
 .. _tmpdir: http://pytest.org/tmpdir.html
 .. _linkchecker: http://linkchecker.sourceforge.net/
-.. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
 .. _bleeding-edge archive: https://bitbucket.org/basti/pytest-localserver/get/tip.tar.gz
+.. _report: https://bitbucket.org/basti/pytest-localserver/issues/
+.. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _Mailsink recipe: http://code.activestate.com/recipes/440690/
