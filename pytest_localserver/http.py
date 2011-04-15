@@ -9,7 +9,7 @@ import threading
 
 import pytest_localserver
 
-class Server (BaseHTTPServer.HTTPServer, threading.Thread):
+class Server (BaseHTTPServer.HTTPServer):
 
     """
     Small test server which can be taught which files to serve with which 
@@ -37,10 +37,30 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
         self.headers = {}
         self.logging = False
 
+        self._running = False
+
         # initialise thread
         self.threadname = threadname or self.__class__
-        threading.Thread.__init__(self, name=self.threadname)
-    
+        self._thread = threading.Thread(
+                name=self.threadname, target=self.serve_forever)
+
+        # support for Python 2.4 and 2.5
+        if sys.version_info[:2] < (2, 6):
+
+            def stop():
+                # since BaseHTTPServer.serve_forever is potentially blocking 
+                # (i.e. it needs to handle a request before stopping), we need
+                # to kill it! 
+                self._running = False
+                self._thread.join(0) # DIE THREAD! DIE!
+
+            # Luckily, threads in daemon mode will exit gracefully.
+            self._thread.setDaemon(True)
+            self.stop = stop
+
+    def __del__(self):
+        self.stop()
+
     def __repr__(self):
         return '<http.Server %s:%s>' % self.server_address
 
@@ -50,15 +70,33 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
             return 'http://%s' % self.server_name
         return 'http://%s:%s' % self.server_address
 
-    def run(self):
-        self.serve_forever()
+    def start(self):
+        """
+        Starts the test server.
+        """
+        self._thread.start()
+        self._running = True
 
     def stop(self, timeout=None):
         """
         Stops test server.
+
+        :param timeout: When the timeout argument is present and not None, it
+        should be a floating point number specifying a timeout for the operation
+        in seconds (or fractions thereof).
         """
         self.shutdown()
-        self.join(timeout)
+        self._thread.join(timeout)
+        self._running = False
+
+    def is_running(self):
+        """
+        Is server still/already running?
+        """
+        return self._running
+
+    # DEPRECATED!
+    is_alive = is_running
 
     def serve_content(self, content, code=200, headers=None):
         """
@@ -66,7 +104,7 @@ class Server (BaseHTTPServer.HTTPServer, threading.Thread):
         all subsequent request.
         """
         self.content, self.code = (content, code)
-        if headers: 
+        if headers:
             self.headers = headers
 
 
@@ -134,7 +172,7 @@ if __name__ == '__main__':
     server.serve_content(open(path).read(), 302)
     
     try:
-        while True: 
+        while True:
             time.sleep(1)
     except KeyboardInterrupt:
         print '\rstopping...'
