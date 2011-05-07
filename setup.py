@@ -32,9 +32,10 @@ setup(
     keywords='py.test pytest server localhost http smtp',
     classifiers = [
         'Operating System :: OS Independent',
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Topic :: Software Development :: Testing'
