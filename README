@@ -53,6 +53,9 @@ Available funcargs
     which is the string representation of tuple ``server_address`` (host as str,
     port as int).
 
+``httpsserver``
+    is the same as ``httpserver`` only with SSL encryption.
+
 ``smtpserver``
     provides a threaded instance of ``smtpd.SMTPServer`` runnning on localhost.
     It has the following attributes:
@@ -79,9 +82,14 @@ the license in the LICENSE file.
 
 Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
 
-I borrowed some implementation ideas for the httpserver from `linkchecker`_.
-The implementation for the SMTP server is based on the `Mailsink recipe`_ by 
-Adam Feuer, Matt Branthwaite and Troy Frever.
+Some parts of this package is based on ideas or code from other people:
+
+- I borrowed some implementation ideas for the httpserver from `linkchecker`_.
+- The implementation for the SMTP server is based on the `Mailsink recipe`_ by 
+  Adam Feuer, Matt Branthwaite and Troy Frever.
+- The HTTPS implementation is based on work by `Sebastien Martini`_.
+
+Thanks guys!
 
 Development and future plans
 ============================
@@ -95,7 +103,7 @@ If you find any bugs, please file a `report`_.
 
 I already have a couple of ideas for future versions:
 
-* support for HTTPS, FTP, SSH (maybe base all on twisted?)
+* support for FTP, SSH (maybe base all on twisted?)
 * making the SMTP outbox as convenient to use as ``django.core.mail.outbox``
 * add your own here!
 
@@ -115,3 +123,4 @@ I already have a couple of ideas for future versions:
 .. _report: https://bitbucket.org/basti/pytest-localserver/issues/
 .. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _Mailsink recipe: http://code.activestate.com/recipes/440690/
+.. _Sebastien Martini: http://code.activestate.com/recipes/442473/
