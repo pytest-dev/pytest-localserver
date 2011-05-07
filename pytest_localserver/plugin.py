@@ -5,13 +5,22 @@
 
 import py
 
-from pytest_localserver import http, smtp
+from pytest_localserver import http, https, smtp
 
 def pytest_funcarg__httpserver(request):
     """The returned ``httpserver`` funcarg provides these
     helper methods to...
     """
     server = http.Server()
+    server.start()
+    request.addfinalizer(server.stop)
+    return server
+
+def pytest_funcarg__httpsserver(request):
+    """The returned ``httpsserver`` funcarg provides these
+    helper methods to...
+    """
+    server = https.Server()
     server.start()
     request.addfinalizer(server.stop)
     return server

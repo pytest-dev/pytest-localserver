@@ -9,13 +9,57 @@ import threading
 
 import pytest_localserver
 
+class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    
+    """
+    Handler for HTTP requests serving files specified by server instance.
+    """
+    
+    # The server software version.  You may want to override this.
+    # The format is multiple whitespace-separated strings,
+    # where each string is of the form name[/version].
+    server_version = 'pytest_localserver.http/%s' % pytest_localserver.VERSION
+
+    def log_message(self, format, *args):
+        """
+        Overrides standard logging method.
+        """
+        if self.server.logging:
+            sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(), 
+                self.log_date_time_string(), format % args))
+
+    def send_head(self):
+        """
+        Common code for GET and HEAD commands. This sends the response code and
+        other headers (like MIME type).
+        """
+        self.send_response(self.server.code)
+        for key, val in self.server.headers.items():
+            self.send_header(key, val)
+        self.end_headers()
+
+    def do_HEAD(self):
+        """
+        Serve a HEAD request.
+        """
+        self.send_head()
+
+    def do_GET(self):
+        """
+        Serve a GET request. Response will be ``self.server.content`` as
+        message.
+        """
+        self.send_head()
+        self.wfile.write(self.server.content)
+
+
 class Server (BaseHTTPServer.HTTPServer):
 
     """
     Small test server which can be taught which files to serve with which 
     response code. Try the following snippet for testing API calls::
         
-        server = TestServer(port=8080)
+        server = Server(port=8080)
         server.start()
         print 'Test server running at http://%s:%i' % server.server_address
         server.serve_file(code=503)
@@ -24,8 +68,9 @@ class Server (BaseHTTPServer.HTTPServer):
         
     """
 
-    def __init__(self, host='localhost', port=0, threadname=None):
-        BaseHTTPServer.HTTPServer.__init__(self, (host, port), RequestHandler)
+    def __init__(self, host='localhost', port=0, 
+                 threadname=None, handler=RequestHandler):
+        BaseHTTPServer.HTTPServer.__init__(self, (host, port), handler)
 
         # Workaround for Python 2.4: using port 0 will bind a free port to the 
         # underlying socket. The server_address, however, is not reflecting 
@@ -106,50 +151,6 @@ class Server (BaseHTTPServer.HTTPServer):
         self.content, self.code = (content, code)
         if headers:
             self.headers = headers
-
-
-class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    
-    """
-    Handler for HTTP requests serving files specified by server instance.
-    """
-    
-    # The server software version.  You may want to override this.
-    # The format is multiple whitespace-separated strings,
-    # where each string is of the form name[/version].
-    server_version = 'pytest_localserver.http/%s' % pytest_localserver.VERSION
-
-    def log_message(self, format, *args):
-        """
-        Overrides standard logging method.
-        """
-        if self.server.logging:
-            sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(), 
-                self.log_date_time_string(), format % args))
-
-    def send_head(self):
-        """
-        Common code for GET and HEAD commands. This sends the response code and
-        other headers (like MIME type).
-        """
-        self.send_response(self.server.code)
-        for key, val in self.server.headers.items():
-            self.send_header(key, val)
-        self.end_headers()
-
-    def do_HEAD(self):
-        """
-        Serve a HEAD request.
-        """
-        self.send_head()
-
-    def do_GET(self):
-        """
-        Serve a GET request. Response will be ``self.server.content`` as
-        message.
-        """
-        self.send_head()
-        self.wfile.write(self.server.content)
 
 
 if __name__ == '__main__':

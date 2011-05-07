@@ -20,9 +20,14 @@ setup(
     download_url='http://bitbucket.org/basti/pytest-localserver/downloads/',
 
     packages = ['pytest_localserver'],
-    install_requires = ['pytest>=2.0.0'],
+    install_requires = [
+        'pytest>=2.0.0', 
+        'pyOpenSSL'
+    ],
     entry_points = {'pytest11': ['localserver = pytest_localserver.plugin']},
+
     zip_safe=False,
+    include_package_data=True,
 
     keywords='py.test pytest server localhost http smtp',
     classifiers = [
