@@ -6,8 +6,6 @@
 
 import asyncore
 import email
-from mailbox import Maildir
-import os
 import smtpd
 import sys
 import threading
@@ -30,7 +28,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
 
     WAIT_BETWEEN_CHECKS = 0.001
 
-    def __init__(self, host='localhost', port=0, rootdir=None):
+    def __init__(self, host='localhost', port=0):
         smtpd.SMTPServer.__init__(self, (host, port), None)
         if self._localaddr[1] == 0:
             self.addr = self.getsockname()

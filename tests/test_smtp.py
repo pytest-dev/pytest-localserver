@@ -34,10 +34,8 @@ def test_smtpserver_funcarg(smtpserver):
     assert smtpserver.is_alive()
     assert smtpserver.accepting and smtpserver.addr
 
-def test_init_smtpserver(tmpdir):
-    missing = tmpdir.mkdir('exists')
-    assert missing.check(dir=True, exists=True)
-    server = smtp.Server(rootdir=missing.strpath)
+def test_init_smtpserver():
+    server = smtp.Server()
     assert len(server.outbox) == 0
 
 def test_send_email(smtpserver):
