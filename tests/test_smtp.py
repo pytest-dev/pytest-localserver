@@ -34,14 +34,10 @@ def test_smtpserver_funcarg(smtpserver):
     assert smtpserver.is_alive()
     assert smtpserver.accepting and smtpserver.addr
 
-def test_init_smtpserver():
-    server = smtp.Server()
-    assert len(server.outbox) == 0
-
-def test_send_email(smtpserver):
-    # outbox is empty
+def test_smtpserver_has_empty_outbox_at_startup(smtpserver):
     assert len(smtpserver.outbox) == 0
 
+def test_send_email(smtpserver):
     # send one e-mail
     send_plain_email('alice@example.com', 'webmaster@example.com',
         'Your e-mail is getting there', 'Seems like this test actually works!',
