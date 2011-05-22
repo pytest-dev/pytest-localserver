@@ -61,8 +61,6 @@ Available funcargs
     It has the following attributes:
 
     * ``addr`` - server address as tuple (host as str, port as int)
-    * ``outbox`` - a ``mailbox.Maildir`` instance containing all sent messages.
-      It will live a temporary directory created with `tmpdir`_.
 
 Download and Installation
 =========================
