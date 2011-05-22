@@ -40,22 +40,29 @@ def test_init_smtpserver(tmpdir):
     server = smtp.Server(rootdir=missing.strpath)
     assert len(server.outbox) == 0
 
-def test_init_smtpserver_with_missing_rootdir_fails(tmpdir):
-    missing = tmpdir.join('missing')
-    assert not missing.check(dir=True, exists=True)
-    pytest.raises(AssertionError, smtp.Server, rootdir=missing.strpath)
-
 def test_send_email(smtpserver):
+    # outbox is empty
     assert len(smtpserver.outbox) == 0
-    # one mail is being sent
+
+    # send one e-mail
     send_plain_email('alice@example.com', 'webmaster@example.com',
         'Your e-mail is getting there', 'Seems like this test actually works!',
         smtpserver.addr)
-    # one mail is being sent
-    assert len(smtpserver.outbox) == 1
+    msg = smtpserver.outbox[-1]
+    assert msg['To'] == 'alice@example.com'
+    assert msg['From'] == 'webmaster@example.com'
+    assert msg['Subject'] == 'Your e-mail is getting there'
+    
+    # send another e-mail
     send_plain_email('bob@example.com', 'webmaster@example.com',
         'His e-mail too', 'Seems like this test actually works!', 
         smtpserver.addr)
+    
+    msg = smtpserver.outbox[-1]
+    assert msg['To'] == 'bob@example.com'
+    assert msg['From'] == 'webmaster@example.com'
+    assert msg['Subject'] == 'His e-mail too'
+    
     # two mails are now in outbox
     assert len(smtpserver.outbox) == 2
 

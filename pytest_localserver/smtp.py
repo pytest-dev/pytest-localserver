@@ -35,22 +35,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
         if self._localaddr[1] == 0:
             self.addr = self.getsockname()
 
-        # if no root dir for Maildir is specified
-        # use system's tmp dir
-        if rootdir is None:
-            import tempfile
-            rootdir = tempfile.gettempdir()
-
-        assert os.path.isdir(rootdir), \
-            'Make sure that directory %s exists!' % rootdir
-        try:
-            self.outbox = Maildir(os.path.join(rootdir, 'Maildir'), None, True)
-        except TypeError:
-            root = os.path.join(rootdir, 'Maildir')
-            os.mkdir(root)
-            for folder in ('new', 'cur', 'tmp'):
-                os.mkdir(os.path.join(root, folder))
-            self.outbox = Maildir(root, None)
+        self.outbox = []
 
         # initialise thread
         self._stopevent = threading.Event()
@@ -70,8 +55,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
         """
         Adds message to outbox.
         """
-        msg = email.message_from_string(data)
-        self.outbox.add(msg)
+        self.outbox += [email.message_from_string(data)]
 
     def run(self):
         """
