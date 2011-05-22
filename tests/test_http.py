@@ -24,6 +24,11 @@ def test_server_is_killed(httpserver):
     httpserver.stop()
     assert not httpserver.is_alive()
 
+def test_server_is_deleted(httpserver):
+    assert httpserver.is_alive()
+    httpserver.__del__() # need to call magic method here!
+    assert not httpserver.is_alive()
+
 def test_some_content_retrieval(httpserver):
     httpserver.serve_content('TEST!')
     resp = urllib2.urlopen(httpserver.url)

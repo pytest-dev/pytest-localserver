@@ -34,6 +34,16 @@ def test_smtpserver_funcarg(smtpserver):
     assert smtpserver.is_alive()
     assert smtpserver.accepting and smtpserver.addr
 
+def test_server_is_killed(smtpserver):
+    assert smtpserver.is_alive()
+    smtpserver.stop()
+    assert not smtpserver.is_alive()
+
+def test_server_is_deleted(smtpserver):
+    assert smtpserver.is_alive()
+    smtpserver.__del__() # need to call magic method here!
+    assert not smtpserver.is_alive()
+
 def test_smtpserver_has_empty_outbox_at_startup(smtpserver):
     assert len(smtpserver.outbox) == 0
 

@@ -24,6 +24,11 @@ def test_server_is_killed(httpsserver):
     httpsserver.stop()
     assert not httpsserver.is_alive()
 
+def test_server_is_deleted(httpsserver):
+    assert httpsserver.is_alive()
+    httpsserver.__del__()
+    assert not httpsserver.is_alive()
+
 def test_some_content_retrieval(httpsserver):
     httpsserver.serve_content('TEST!')
     resp = urllib2.urlopen(httpsserver.url)
