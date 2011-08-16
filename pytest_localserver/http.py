@@ -4,6 +4,8 @@
 # the license in the LICENSE file.
 
 import BaseHTTPServer
+import gzip
+import StringIO
 import sys
 import threading
 
@@ -49,8 +51,19 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Serve a GET request. Response will be ``self.server.content`` as
         message.
         """
+        if ('gzip' in self.headers.get('accept-encoding')
+        and self.server.allow_gzip):
+            zipped = StringIO.StringIO()
+            fp = gzip.GzipFile(fileobj=zipped, mode='wb')
+            fp.write(self.server.content)
+            fp.close()
+            self.server.headers['content-encoding'] = 'gzip'
+            content = zipped.getvalue()
+        else:
+            content = self.server.content
+
         self.send_head()
-        self.wfile.write(self.server.content)
+        self.wfile.write(content)
 
 
 class Server (BaseHTTPServer.HTTPServer):
@@ -80,6 +93,7 @@ class Server (BaseHTTPServer.HTTPServer):
 
         self.content, self.code = (None, 204) # HTTP 204: No Content
         self.headers = {}
+        self.allow_gzip = False
         self.logging = False
 
         self._running = False
