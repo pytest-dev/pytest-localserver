@@ -93,7 +93,7 @@ class Server (BaseHTTPServer.HTTPServer):
 
         self.content, self.code = (None, 204) # HTTP 204: No Content
         self.headers = {}
-        self.allow_gzip = False
+        self.allow_gzip = True
         self.logging = False
 
         self._running = False
