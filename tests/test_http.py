@@ -45,7 +45,7 @@ def test_GET_request(httpserver):
     assert resp.code == 200
     assert resp.headers.getheader('Content-type') == 'text/plain'
 
-def test_gzipped_ET_request(httpserver):
+def test_gzipped_GET_request(httpserver):
     httpserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     req = urllib2.Request(httpserver.url)
     req.add_header('User-Agent', 'Test method')
