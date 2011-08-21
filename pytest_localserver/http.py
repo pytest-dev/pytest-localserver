@@ -56,13 +56,14 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 class Server (BaseHTTPServer.HTTPServer):
 
     """
-    Small test server which can be taught which files to serve with which 
-    response code. Try the following snippet for testing API calls::
+    Small test server which can be taught which content (i.e. string) to serve
+    with which response code. Try the following snippet for testing API calls::
         
         server = Server(port=8080)
         server.start()
         print 'Test server running at http://%s:%i' % server.server_address
-        server.serve_file(code=503)
+        server.content = 'Hello World!'
+        server.code = 503
         # any call to http://localhost:8080 will get a 503 response.
         # ...
         
