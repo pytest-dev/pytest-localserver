@@ -41,7 +41,7 @@ def pytest_funcarg__httpserver(request):
     return server
 
 def pytest_funcarg__httpsserver(request):
-    """The returned ``httpsserver`` (note the additions S!) provides a threaded
+    """The returned ``httpsserver`` (note the additional S!) provides a threaded
     HTTP server instance similar to funcarg ``httpserver`` but with SSL
     encryption.
     """
@@ -52,7 +52,7 @@ def pytest_funcarg__httpsserver(request):
 
 def pytest_funcarg__smtpserver(request):
     """The returned ``smtpserver`` provides a threaded instance of
-    ``smtpd.SMTPServer`` runnning on localhost.  It has the following
+    ``smtpd.SMTPServer`` running on localhost.  It has the following
     attributes:
 
     * ``addr`` - server address as tuple (host as str, port as int)
