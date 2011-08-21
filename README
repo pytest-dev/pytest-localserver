@@ -44,7 +44,7 @@ Available funcargs
     these values until they are changed or the server is stopped. A more 
     convenient way to change these is ::
 
-        httpserver.server_content(content=None, code=200, headers=None) 
+        httpserver.serve_content(content=None, code=200, headers=None) 
 
     The server address can be found in property
 
