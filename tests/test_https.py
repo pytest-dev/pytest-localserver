@@ -1,4 +1,5 @@
 import httplib
+import gzip
 import StringIO
 import urllib2
 
@@ -39,8 +40,20 @@ def test_GET_request(httpsserver):
     httpsserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     req = urllib2.Request(httpsserver.url)
     req.add_header('User-Agent', 'Test method')
-    req.add_header('Accept-encoding', 'gzip')
     resp = urllib2.urlopen(req)
     assert resp.read() == 'TEST!'
     assert resp.code == 200
     assert resp.headers.getheader('Content-type') == 'text/plain'
+
+def test_gzipped_GET_request(httpsserver):
+    httpsserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
+    req = urllib2.Request(httpsserver.url)
+    req.add_header('User-Agent', 'Test method')
+    req.add_header('Accept-encoding', 'gzip')
+    resp = urllib2.urlopen(req)
+    unzipped = gzip.GzipFile(fileobj=StringIO.StringIO(resp.read()), mode='r')
+    assert unzipped.read() == 'TEST!'
+    assert resp.code == 200
+    assert resp.headers.getheader('Content-type') == 'text/plain'
+    assert resp.headers.getheader('content-encoding') == 'gzip'
+
