@@ -69,7 +69,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
 
-        if ctype == 'application/x-www-form-urlencoded':
+        if (ctype == 'application/x-www-form-urlencoded' and
+                     self.server.method == 'POST'):
                 length = int(self.headers['content-length'])
                 postvars = cgi.parse_qs(self.rfile.read(length),
                                         keep_blank_values=1)
@@ -177,7 +178,8 @@ class Server (BaseHTTPServer.HTTPServer):
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
         """
-        self.content, self.code, self.data = (content, code, data)
+        self.content, self.code, self.method, self.data = (content, code,
+                                                           method, data)
         if headers:
             self.headers = headers
 
