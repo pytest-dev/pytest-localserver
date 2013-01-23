@@ -4,6 +4,7 @@
 # the license in the LICENSE file.
 
 import BaseHTTPServer
+import cgi
 import gzip
 import StringIO
 import sys
@@ -11,12 +12,13 @@ import threading
 
 import pytest_localserver
 
+
 class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
-    
+
     """
     Handler for HTTP requests serving files specified by server instance.
     """
-    
+
     # The server software version.  You may want to override this.
     # The format is multiple whitespace-separated strings,
     # where each string is of the form name[/version].
@@ -27,8 +29,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Overrides standard logging method.
         """
         if self.server.logging:
-            sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(), 
-                self.log_date_time_string(), format % args))
+            sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(),
+                             self.log_date_time_string(), format % args))
 
     def send_head(self):
         """
@@ -52,7 +54,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         message.
         """
         if ('gzip' in self.headers.get('accept-encoding')
-        and self.server.allow_gzip):
+                and self.server.allow_gzip):
             zipped = StringIO.StringIO()
             fp = gzip.GzipFile(fileobj=zipped, mode='wb')
             fp.write(self.server.content)
@@ -65,13 +67,25 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_head()
         self.wfile.write(content)
 
+    def do_POST(self):
+        ctype, pdict = cgi.parse_header(self.headers['content-type'])
+
+        if ctype == 'application/x-www-form-urlencoded':
+            length = int(self.headers['content-length'])
+            postvars = cgi.parse_qs(self.rfile.read(length),
+                                    keep_blank_values=1)
+        else:
+            postvars = {}
+        self.send_head()
+        self.wfile.write(postvars)
+
 
 class Server (BaseHTTPServer.HTTPServer):
 
     """
     Small test server which can be taught which content (i.e. string) to serve
     with which response code. Try the following snippet for testing API calls::
-        
+
         server = Server(port=8080)
         server.start()
         print 'Test server running at http://%s:%i' % server.server_address
@@ -79,20 +93,20 @@ class Server (BaseHTTPServer.HTTPServer):
         server.code = 503
         # any call to http://localhost:8080 will get a 503 response.
         # ...
-        
+
     """
 
-    def __init__(self, host='localhost', port=0, 
+    def __init__(self, host='localhost', port=0,
                  threadname=None, handler=RequestHandler):
         BaseHTTPServer.HTTPServer.__init__(self, (host, port), handler)
 
-        # Workaround for Python 2.4: using port 0 will bind a free port to the 
-        # underlying socket. The server_address, however, is not reflecting 
+        # Workaround for Python 2.4: using port 0 will bind a free port to the
+        # underlying socket. The server_address, however, is not reflecting
         # this! So we need to adjust it manually.
-        if self.server_address[1] == 0: 
+        if self.server_address[1] == 0:
             self.server_address = (self.server_address[0], self.server_port)
 
-        self.content, self.code = (None, 204) # HTTP 204: No Content
+        self.content, self.code = (None, 204)  # HTTP 204: No Content
         self.headers = {}
         self.allow_gzip = True
         self.logging = False
@@ -101,18 +115,18 @@ class Server (BaseHTTPServer.HTTPServer):
 
         # initialise thread
         self.threadname = threadname or self.__class__
-        self._thread = threading.Thread(
-                name=self.threadname, target=self.serve_forever)
+        self._thread = threading.Thread(name=self.threadname,
+                                        target=self.serve_forever)
 
         # support for Python 2.4 and 2.5
         if sys.version_info[:2] < (2, 6):
 
             def stop():
-                # since BaseHTTPServer.serve_forever is potentially blocking 
+                # since BaseHTTPServer.serve_forever is potentially blocking
                 # (i.e. it needs to handle a request before stopping), we need
-                # to kill it! 
+                # to kill it!
                 self._running = False
-                self._thread.join(0) # DIE THREAD! DIE!
+                self._thread.join(0)  # DIE THREAD! DIE!
 
             # Luckily, threads in daemon mode will exit gracefully.
             self._thread.setDaemon(True)
@@ -142,8 +156,8 @@ class Server (BaseHTTPServer.HTTPServer):
         Stops test server.
 
         :param timeout: When the timeout argument is present and not None, it
-        should be a floating point number specifying a timeout for the operation
-        in seconds (or fractions thereof).
+        should be a floating point number specifying a timeout for the
+        operation in seconds (or fractions thereof).
         """
         self.shutdown()
         self._thread.join(timeout)
@@ -158,12 +172,15 @@ class Server (BaseHTTPServer.HTTPServer):
     # DEPRECATED!
     is_alive = is_running
 
-    def serve_content(self, content, code=200, headers=None):
+    def serve_content(self, content, method='GET', code=200, data={},
+                      headers=None):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
         """
         self.content, self.code = (content, code)
+        self.method, self.data = (method, data)
+
         if headers:
             self.headers = headers
 
@@ -186,7 +203,7 @@ if __name__ == '__main__':
             os.path.dirname(os.path.abspath(__file__)), '..', 'README')
 
     server.serve_content(open(path).read(), 302)
-    
+
     try:
         while True:
             time.sleep(1)
