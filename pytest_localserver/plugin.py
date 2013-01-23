@@ -5,7 +5,6 @@
 
 from pytest_localserver import http, https, smtp
 
-
 def pytest_funcarg__httpserver(request):
     """The returned ``httpserver`` provides a threaded HTTP server instance
     running on a randomly assigned port on localhost. It can be taught which
@@ -20,17 +19,17 @@ def pytest_funcarg__httpserver(request):
     these values until they are changed or the server is stopped. A more
     convenient way to change these is ::
 
-        httpserver.serve_content(content=None, code=200, headers=None)
+        httpserver.serve_content(content=None, code=200, headers=None) 
 
     The server address can be found in property
-
+                                            
     * ``url``
-
+                                                
     which is the string representation of tuple ``server_address`` (host as
     str, port as int).
-
+    
     Example::
-
+        
         def test_retrieve_some_content(httpserver):
             httpserver.serve_content(open('cached-content.xml').read())
             assert my_content_retrieval(httpserver.url) == 'Found it!'
@@ -41,17 +40,15 @@ def pytest_funcarg__httpserver(request):
     request.addfinalizer(server.stop)
     return server
 
-
 def pytest_funcarg__httpsserver(request):
-    """The returned ``httpsserver`` (note the additional S!) provides a
-    threaded HTTP server instance similar to funcarg ``httpserver`` but with
-    SSL encryption.
+    """The returned ``httpsserver`` (note the additional S!) provides a threaded
+    HTTP server instance similar to funcarg ``httpserver`` but with SSL
+    encryption.
     """
     server = https.Server()
     server.start()
     request.addfinalizer(server.stop)
     return server
-
 
 def pytest_funcarg__smtpserver(request):
     """The returned ``smtpserver`` provides a threaded instance of

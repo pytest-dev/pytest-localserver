@@ -10,7 +10,6 @@ import smtpd
 import sys
 import threading
 
-
 class Server (smtpd.SMTPServer, threading.Thread):
 
     """
@@ -68,8 +67,8 @@ class Server (smtpd.SMTPServer, threading.Thread):
         Stops test server.
 
         :param timeout: When the timeout argument is present and not None, it
-        should be a floating point number specifying a timeout for the
-        operation in seconds (or fractions thereof).
+        should be a floating point number specifying a timeout for the operation
+        in seconds (or fractions thereof).
         """
         self._stopevent.set()
         threading.Thread.join(self, timeout)
