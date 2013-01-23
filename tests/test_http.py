@@ -1,6 +1,7 @@
 import gzip
 import httplib
 import StringIO
+import urllib
 import urllib2
 
 from pytest_localserver import http, plugin
@@ -66,3 +67,15 @@ def test_HEAD_request(httpserver):
     assert resp.getheader('Content-type') == 'text/plain'
     assert VERSION in resp.getheader('server')
 
+
+def test_POST_request(httpserver):
+    param = urllib.urlencode({'data': 'value'})
+    headers = {'Content-type': 'application/x-www-form-urlencoded',
+               'set-cookie': 'some _cookie_content'}
+    httpserver.serve_content('TEST!', method='POST', code=200, headers=headers)
+    req = urllib2.Request(httpserver.url, param, headers)
+    resp = urllib2.urlopen(req)
+    read = resp.read()
+    assert read != 'TEST!'
+    assert read == "{'data': ['value']}"
+    assert resp.code == 200
