@@ -72,10 +72,18 @@ def test_POST_request(httpserver):
     param = urllib.urlencode({'data': 'value'})
     headers = {'Content-type': 'application/x-www-form-urlencoded',
                'set-cookie': 'some _cookie_content'}
-    httpserver.serve_content('TEST!', method='POST', code=200, headers=headers)
+    httpserver.serve_content('TEST!', headers=headers)
     req = urllib2.Request(httpserver.url, param, headers)
     resp = urllib2.urlopen(req)
     read = resp.read()
-    assert read != 'TEST!'
+
+    assert read == 'TEST!'
+    assert resp.code == 200
+
+    httpserver.serve_content('TEST!', headers=headers, show_post_vars=True)
+    req = urllib2.Request(httpserver.url, param, headers)
+    resp = urllib2.urlopen(req)
+    read = resp.read()
+
     assert read == "{'data': ['value']}"
     assert resp.code == 200

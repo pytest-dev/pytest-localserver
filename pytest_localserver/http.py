@@ -70,14 +70,14 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
 
         if (ctype == 'application/x-www-form-urlencoded' and
-                     self.server.method == 'POST'):
+                self.server.show_post_vars):
                 length = int(self.headers['content-length'])
                 postvars = cgi.parse_qs(self.rfile.read(length),
                                         keep_blank_values=1)
+                self.send_head()
+                self.wfile.write(postvars)
         else:
-            postvars = {}
-        self.send_head()
-        self.wfile.write(postvars)
+            self.do_GET()
 
 
 class Server (BaseHTTPServer.HTTPServer):
@@ -172,14 +172,15 @@ class Server (BaseHTTPServer.HTTPServer):
     # DEPRECATED!
     is_alive = is_running
 
-    def serve_content(self, content, method='GET', code=200, data={},
-                      headers=None):
+    def serve_content(self, content, code=200, data={}, headers=None,
+                      show_post_vars=False):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
         """
-        self.content, self.code, self.method, self.data = (content, code,
-                                                           method, data)
+        self.content, self.code, self.data = (content, code, data)
+        self.show_post_vars = show_post_vars
+
         if headers:
             self.headers = headers
 
