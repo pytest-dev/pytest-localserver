@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+#
 # Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
 # with some ideas from http://code.activestate.com/recipes/440690/
 # SmtpMailsink Copyright 2005 Aviarc Corporation
@@ -9,6 +12,7 @@ import email
 import smtpd
 import sys
 import threading
+
 
 class Server (smtpd.SMTPServer, threading.Thread):
 
@@ -67,8 +71,8 @@ class Server (smtpd.SMTPServer, threading.Thread):
         Stops test server.
 
         :param timeout: When the timeout argument is present and not None, it
-        should be a floating point number specifying a timeout for the operation
-        in seconds (or fractions thereof).
+        should be a floating point number specifying a timeout for the
+        operation in seconds (or fractions thereof).
         """
         self._stopevent.set()
         threading.Thread.join(self, timeout)
