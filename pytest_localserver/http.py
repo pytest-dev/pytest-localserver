@@ -172,13 +172,13 @@ class Server (BaseHTTPServer.HTTPServer):
     # DEPRECATED!
     is_alive = is_running
 
-    def serve_content(self, content, code=200, data={}, headers=None,
+    def serve_content(self, content, code=200, headers=None,
                       show_post_vars=False):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
         """
-        self.content, self.code, self.data = (content, code, data)
+        self.content, self.code, = (content, code)
         self.show_post_vars = show_post_vars
 
         if headers:
