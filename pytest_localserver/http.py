@@ -67,15 +67,19 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self):
+        """
+        Serve POST request. If ``self.server.show_post_vars`` is ``True``, 
+        submitted vars will be returned. Otherwise the response will be 
+        ``self.server.content``.
+        """
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
-
-        if (ctype == 'application/x-www-form-urlencoded' and
-                self.server.show_post_vars):
-                length = int(self.headers['content-length'])
-                postvars = cgi.parse_qs(self.rfile.read(length),
-                                        keep_blank_values=1)
-                self.send_head()
-                self.wfile.write(postvars)
+        if (ctype == 'application/x-www-form-urlencoded'
+        and self.server.show_post_vars):
+            length = int(self.headers['content-length'])
+            postvars = cgi.parse_qs(
+                self.rfile.read(length), keep_blank_values=1)
+            self.send_head()
+            self.wfile.write(postvars)
         else:
             self.do_GET()
 
@@ -110,6 +114,7 @@ class Server (BaseHTTPServer.HTTPServer):
         self.headers = {}
         self.allow_gzip = True
         self.logging = False
+        self.show_post_vars = False
 
         self._running = False
 
