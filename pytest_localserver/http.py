@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 Sebastian Rahlf <basti at redtoad dot de>
+# Copyright (C) 2010-2013 Sebastian Rahlf and others (see AUTHORS).
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
@@ -52,11 +52,11 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Serve a GET request. Response will be ``self.server.content`` as
         message.
         """
-        if ('gzip' in self.headers.get('accept-encoding')
+        if ('gzip' in self.headers.get('accept-encoding', '')
         and self.server.allow_gzip):
             zipped = StringIO.StringIO()
             fp = gzip.GzipFile(fileobj=zipped, mode='wb')
-            fp.write(self.server.content)
+            fp.write(self.server.content or '')
             fp.close()
             self.server.headers['content-encoding'] = 'gzip'
             content = zipped.getvalue()
