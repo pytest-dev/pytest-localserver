@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-#
-# Copyright (C) 2010-2011 Sebastian Rahlf <basti at redtoad dot de>
+# Copyright (C) 2010-2013 Sebastian Rahlf and others (see AUTHORS).
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
@@ -12,6 +9,7 @@ import gzip
 import StringIO
 import sys
 import threading
+
 import pytest_localserver
 
 
@@ -55,11 +53,11 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Serve a GET request. Response will be ``self.server.content`` as
         message.
         """
-        if ('gzip' in self.headers.get('accept-encoding')
+        if ('gzip' in self.headers.get('accept-encoding', '')
         and self.server.allow_gzip):
             zipped = StringIO.StringIO()
             fp = gzip.GzipFile(fileobj=zipped, mode='wb')
-            fp.write(self.server.content)
+            fp.write(self.server.content or '')
             fp.close()
             self.server.headers['content-encoding'] = 'gzip'
             content = zipped.getvalue()
@@ -70,15 +68,19 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_POST(self):
+        """
+        Serve POST request. If ``self.server.show_post_vars`` is ``True``, 
+        submitted vars will be returned. Otherwise the response will be 
+        ``self.server.content``.
+        """
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
-
-        if (ctype == 'application/x-www-form-urlencoded' and
-                self.server.show_post_vars):
-                length = int(self.headers['content-length'])
-                postvars = cgi.parse_qs(self.rfile.read(length),
-                                        keep_blank_values=1)
-                self.send_head()
-                self.wfile.write(postvars)
+        if (ctype == 'application/x-www-form-urlencoded'
+        and self.server.show_post_vars):
+            length = int(self.headers['content-length'])
+            postvars = cgi.parse_qs(
+                self.rfile.read(length), keep_blank_values=1)
+            self.send_head()
+            self.wfile.write(postvars)
         else:
             self.do_GET()
 
@@ -113,6 +115,7 @@ class Server (BaseHTTPServer.HTTPServer):
         self.headers = {}
         self.allow_gzip = True
         self.logging = False
+        self.show_post_vars = False
 
         self._running = False
 

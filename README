@@ -99,6 +99,9 @@ always welcome!::
 
 If you find any bugs, please file a `report`_.
 
+Test can be run with tox. Note that you need virtualenv<1.8 to run tests for
+Python 2.4.
+
 I already have a couple of ideas for future versions:
 
 * support for FTP, SSH (maybe base all on twisted?)
@@ -119,6 +122,7 @@ I already have a couple of ideas for future versions:
 .. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
 .. _bleeding-edge archive: https://bitbucket.org/basti/pytest-localserver/get/tip.tar.gz
 .. _report: https://bitbucket.org/basti/pytest-localserver/issues/
+.. _tox: http://testrun.org/tox/
 .. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _Mailsink recipe: http://code.activestate.com/recipes/440690/
 .. _Sebastien Martini: http://code.activestate.com/recipes/442473/
