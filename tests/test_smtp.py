@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
-
 import smtplib
 
 from email.MIMEText import MIMEText
@@ -57,19 +54,20 @@ def test_smtpserver_has_empty_outbox_at_startup(smtpserver):
 
 def test_send_email(smtpserver):
     # send one e-mail
-    send_plain_email('alice@example.com', 'webmaster@example.com',
-                     'Your e-mail is getting there',
-                     'Seems like this test actually works!',
-                     smtpserver.addr)
+    send_plain_email(
+        'alice@example.com', 'webmaster@example.com',
+        'Your e-mail is getting there', 'Seems like this test actually works!',
+        smtpserver.addr)
     msg = smtpserver.outbox[-1]
     assert msg['To'] == 'alice@example.com'
     assert msg['From'] == 'webmaster@example.com'
     assert msg['Subject'] == 'Your e-mail is getting there'
 
     # send another e-mail
-    send_plain_email('bob@example.com', 'webmaster@example.com',
-                     'His e-mail too', 'Seems like this test actually works!',
-                     smtpserver.addr)
+    send_plain_email(
+        'bob@example.com', 'webmaster@example.com',
+        'His e-mail too', 'Seems like this test actually works!',
+        smtpserver.addr)
 
     msg = smtpserver.outbox[-1]
     assert msg['To'] == 'bob@example.com'

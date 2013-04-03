@@ -32,7 +32,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         """
         if self.server.logging:
             sys.stdout.write("%s - - [%s] %s\n" % (self.address_string(),
-                             self.log_date_time_string(), format % args))
+                self.log_date_time_string(), format % args))
 
     def send_head(self):
         """
@@ -55,8 +55,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         Serve a GET request. Response will be ``self.server.content`` as
         message.
         """
-        if ('gzip' in self.headers.get('accept-encoding') and
-                self.server.allow_gzip):
+        if ('gzip' in self.headers.get('accept-encoding')
+        and self.server.allow_gzip):
             zipped = StringIO.StringIO()
             fp = gzip.GzipFile(fileobj=zipped, mode='wb')
             fp.write(self.server.content)
@@ -118,8 +118,8 @@ class Server (BaseHTTPServer.HTTPServer):
 
         # initialise thread
         self.threadname = threadname or self.__class__
-        self._thread = threading.Thread(name=self.threadname,
-                                        target=self.serve_forever)
+        self._thread = threading.Thread(
+                name=self.threadname, target=self.serve_forever)
 
         # support for Python 2.4 and 2.5
         if sys.version_info[:2] < (2, 6):
