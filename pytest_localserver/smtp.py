@@ -81,10 +81,10 @@ class Server (smtpd.SMTPServer, threading.Thread):
     def __del__(self):
         self.stop()
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<smtp.Server %s:%s>' % self.addr
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import time
 
     server = Server()

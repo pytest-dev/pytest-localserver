@@ -134,7 +134,7 @@ class Server (HTTPServer):
         return 'https://%s:%s' % self.server_address
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     import sys
     import time

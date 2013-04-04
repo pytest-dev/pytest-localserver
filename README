@@ -89,6 +89,12 @@ poking around in the code itself.
     which is the string representation of tuple ``server_address`` (host as str,
     port as int).
 
+    If you want to check which form fields have been POSTed, Try ::
+
+        httpserver.serve_content(..., show_post_vars=True)
+
+    which will display them as parsable text.
+
 ``httpsserver``
     is the same as ``httpserver`` only with SSL encryption.
 

@@ -141,7 +141,7 @@ class Server (BaseHTTPServer.HTTPServer):
     def __del__(self):
         self.stop()
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<http.Server %s:%s>' % self.server_address
 
     @property
@@ -183,6 +183,12 @@ class Server (BaseHTTPServer.HTTPServer):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
+
+        :param content: content to be displayed
+        :param code: HTTP status code
+        :param headers: HTTP headers to be returned
+        :param show_post_vars: If ``True`` POST request will return their
+        variables as response
         """
         self.content, self.code, = (content, code)
         self.show_post_vars = show_post_vars
@@ -191,7 +197,7 @@ class Server (BaseHTTPServer.HTTPServer):
             self.headers = headers
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import os.path
     import time
 
