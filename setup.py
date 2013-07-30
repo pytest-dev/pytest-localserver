@@ -29,7 +29,8 @@ setup(
 
     packages=['pytest_localserver'],
     install_requires=[
-        'werkzeug'
+        'werkzeug',
+        'OpenSSL'
     ],
     tests_require=[
         'pytest>=2.0.0',

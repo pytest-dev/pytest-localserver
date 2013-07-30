@@ -6,8 +6,6 @@
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
 
-from pytest_localserver import http, https, smtp
-
 
 def pytest_funcarg__httpserver(request):
     """The returned ``httpserver`` provides a threaded HTTP server instance
@@ -39,7 +37,8 @@ def pytest_funcarg__httpserver(request):
             assert my_content_retrieval(httpserver.url) == 'Found it!'
 
     """
-    server = http.Server()
+    from pytest_localserver import http
+    server = http.ContentServer()
     server.start()
     request.addfinalizer(server.stop)
     return server
@@ -50,7 +49,8 @@ def pytest_funcarg__httpsserver(request):
     threaded HTTP server instance similar to funcarg ``httpserver`` but with
     SSL encryption.
     """
-    server = https.Server()
+    from pytest_localserver import https
+    server = https.SecureContentServer()
     server.start()
     request.addfinalizer(server.stop)
     return server
@@ -63,6 +63,7 @@ def pytest_funcarg__smtpserver(request):
 
     * ``addr`` - server address as tuple (host as str, port as int)
     """
+    from pytest_localserver import smtp
     server = smtp.Server()
     server.start()
     request.addfinalizer(server.stop)

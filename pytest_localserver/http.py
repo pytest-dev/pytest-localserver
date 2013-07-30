@@ -60,8 +60,8 @@ class ContentServer(WSGIServer):
 
     """
 
-    def __init__(self, host='127.0.0.1', port=0):
-        super(ContentServer, self).__init__(host, port, self)
+    def __init__(self, host='127.0.0.1', port=0, ssl_context=None):
+        super(ContentServer, self).__init__(host, port, self, ssl_context=ssl_context)
         self.content, self.code = (None, 204)  # HTTP 204: No Content
         self.headers = {}
         self.show_post_vars = False
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     server = WSGIServer(application=app)
     server.start()
 
-    print('HTTP server is running at http://%s:%i' % server.server_address)
+    print('HTTP server is running at %s' % server.url)
     print('Type <Ctrl-C> to stop')
 
     try:
