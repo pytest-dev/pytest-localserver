@@ -1,44 +1,26 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
+# Copyright (C) 2010-2013 Sebastian Rahlf and others (see AUTHORS).
 #
-# Copyright (C) 2010-2011 Sebastian Rahlf <basti at redtoad dot de>
-# based on http://code.activestate.com/recipes/442473/
-# Written by Sebastien Martini
-# which is Licensed under the PSF License
+# This program is release under the MIT license. You can find the full text of
+# the license in the LICENSE file.
 
 import os.path
-import socket
-
-from OpenSSL import SSL
-from pytest_localserver.http import Server as HTTPServer
-from pytest_localserver.http import RequestHandler as HTTPRequestHandler
+from pytest_localserver.http import ContentServer
 
 #: default server certificate
 DEFAULT_CERTIFICATE = os.path.join(
     os.path.abspath(os.path.dirname(__file__)), 'server.pem')
 
 
-class RequestHandler(HTTPRequestHandler):
-
-    """
-    Handler for HTTP requests serving files specified by server instance.
-    """
-
-    def setup(self):
-        self.connection = self.request
-        self.rfile = socket._fileobject(self.request, "rb", self.rbufsize)
-        self.wfile = socket._fileobject(self.request, "wb", self.wbufsize)
-
-
-class Server (HTTPServer):
+class SecureContentServer (ContentServer):
 
     """
     Small test server which works just like :class:`http.Server` over HTTP::
 
-        server = Server(port=8080, key='/srv/my.key', cert='my.certificate')
+        server = SecureContentServer(
+            port=8080, key='/srv/my.key', cert='my.certificate')
         server.start()
-        print 'Test server running at https://%s:%i' % server.server_address
-        server.serve_file('/path/to/some.file')
+        print 'Test server running at %s' % server.url
+        server.serve_content(open('/path/to/some.file').read())
         # any call to https://localhost:8080 will get the contents of
         # /path/to/some.file as a response.
 
@@ -110,28 +92,13 @@ class Server (HTTPServer):
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 
-    def __init__(self, host='localhost', port=0, threadname=None,
-                 key=DEFAULT_CERTIFICATE, cert=DEFAULT_CERTIFICATE,
-                 handler=RequestHandler):
+    def __init__(self, host='localhost', port=0,
+                 key=DEFAULT_CERTIFICATE, cert=DEFAULT_CERTIFICATE):
         """
         :param key: location of file containing the server private key.
         :param cert: location of file containing server certificate.
         """
-        HTTPServer.__init__(self, host, port, threadname, handler)
-
-        ctx = SSL.Context(SSL.SSLv23_METHOD)
-        ctx.use_privatekey_file(key)
-        ctx.use_certificate_file(cert)
-        self.socket = SSL.Connection(ctx, socket.socket(self.address_family,
-                                                        self.socket_type))
-        self.server_bind()
-        self.server_activate()
-
-    @property
-    def url(self):
-        if self.server_port == 443:
-            return 'https://%s' % self.server_name
-        return 'https://%s:%s' % self.server_address
+        super(SecureContentServer, self).__init__(host, port, (key, cert))
 
 
 if __name__ == '__main__':  # pragma: no cover
@@ -139,14 +106,14 @@ if __name__ == '__main__':  # pragma: no cover
     import sys
     import time
 
-    print 'Using certificate %s.' % DEFAULT_CERTIFICATE
+    print('Using certificate %s.' % DEFAULT_CERTIFICATE)
 
-    server = Server()
+    server = SecureContentServer()
     server.start()
     server.logging = True
 
-    print 'HTTPS server is running at https://%s:%i' % (server.server_address)
-    print 'Type <Ctrl-C> to stop'
+    print('HTTPS server is running at %s' % server.url)
+    print('Type <Ctrl-C> to stop')
 
     try:
         path = sys.argv[1]
@@ -160,5 +127,5 @@ if __name__ == '__main__':  # pragma: no cover
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print '\rstopping...'
+        print('\rstopping...')
     server.stop()
