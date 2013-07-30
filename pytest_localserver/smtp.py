@@ -10,7 +10,6 @@
 import asyncore
 import email
 import smtpd
-import sys
 import threading
 
 
@@ -43,15 +42,6 @@ class Server (smtpd.SMTPServer, threading.Thread):
         self._stopevent = threading.Event()
         self.threadName = self.__class__.__name__
         threading.Thread.__init__(self, name=self.threadName)
-
-        # support for Python 2.4 and 2.5
-        if sys.version_info[:2] < (2, 6):
-            self._stopevent.is_set = self._stopevent.isSet
-            self.is_alive = self.isAlive
-
-        # support for Python 2.4
-        if not hasattr(self.outbox, '__len__'):
-            self.outbox.__len__ = lambda: len([msg for msg in self.outbox])
 
     def process_message(self, peer, mailfrom, rcpttos, data):
         """
@@ -90,8 +80,8 @@ if __name__ == "__main__":  # pragma: no cover
     server = Server()
     server.start()
 
-    print 'SMTP server is running on %s:%i' % server.addr
-    print 'Type <Ctrl-C> to stop'
+    print('SMTP server is running on %s:%i' % server.addr)
+    print('Type <Ctrl-C> to stop')
 
     try:
 
@@ -99,7 +89,7 @@ if __name__ == "__main__":  # pragma: no cover
             while True:
                 time.sleep(1)
         finally:
-            print '\rstopping...'
+            print('\rstopping...')
             server.stop()
 
     except KeyboardInterrupt:
