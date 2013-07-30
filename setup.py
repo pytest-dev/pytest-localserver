@@ -2,7 +2,7 @@ from setuptools import setup
 import sys
 
 
-VERSION = '0.1.5'
+VERSION = '0.3pre'
 
 
 def read(fname):
@@ -29,8 +29,12 @@ setup(
 
     packages=['pytest_localserver'],
     install_requires=[
+        'werkzeug'
+    ],
+    tests_require=[
         'pytest>=2.0.0',
-        'pyOpenSSL'
+        'six',
+        'requests'
     ],
     entry_points={
         'pytest11': ['localserver = pytest_localserver.plugin']
@@ -45,10 +49,10 @@ setup(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.4',
-        'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
         'Topic :: Software Development :: Testing'
     ]
 )
