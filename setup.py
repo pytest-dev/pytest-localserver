@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, Command
 import sys
 
 
@@ -16,6 +16,18 @@ if 'upload' in sys.argv or 'register' in sys.argv:
     import pytest_localserver
     assert pytest_localserver.VERSION == VERSION
 
+
+class PyTest(Command):
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        import sys, subprocess
+        errno = subprocess.call([sys.executable, 'runtests.py'])
+        raise SystemExit(errno)
+
 setup(
     name='pytest-localserver',
     version=VERSION,
@@ -32,6 +44,7 @@ setup(
         'werkzeug',
         'OpenSSL'
     ],
+    cmdclass={'test': PyTest},
     tests_require=[
         'pytest>=2.0.0',
         'six',
