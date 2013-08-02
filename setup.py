@@ -42,7 +42,7 @@ setup(
     packages=['pytest_localserver'],
     install_requires=[
         'werkzeug',
-        'OpenSSL'
+        'pyOpenSSL'
     ],
     cmdclass={'test': PyTest},
     tests_require=[
