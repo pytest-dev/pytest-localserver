@@ -105,6 +105,34 @@ poking around in the code itself.
     * ``addr`` - server address as tuple (host as str, port as int)
     * ``outbox`` - list of ``email.message.Message`` instances received.
 
+Using your a WSGI application as test server
+============================================
+
+As of version 0.3 you can now use a `WSGI application`_ to run on the test
+server ::
+
+    from pytest_localserver.http import WSGIServer
+
+    def simple_app(environ, start_response):
+        """Simplest possible WSGI application"""
+        status = '200 OK'
+        response_headers = [('Content-type', 'text/plain')]
+        start_response(status, response_headers)
+        return ['Hello world!\n']
+
+    def pytest_funcarg__testserver(request):
+        """Defines the testserver funcarg"""
+        server = WSGIServer(application=simple_app)
+        server.start()
+        request.addfinalizer(server.stop)
+        return server
+
+    def test_retrieve_some_content(testserver):
+        assert scrape(testserver.url) == 'Hello world!\n'
+
+Have a look at the following page for more information on WSGI:
+http://wsgi.readthedocs.org/en/latest/learn.html
+
 Download and Installation
 =========================
 
@@ -162,6 +190,7 @@ I already have a couple of ideas for future versions:
 .. _pytest: http://pytest.org/
 .. _funcargs feature: http://pytest.org/latest/funcargs.html
 .. _linkchecker: http://linkchecker.sourceforge.net/
+.. _WSGI application: http://www.python.org/dev/peps/pep-0333/
 .. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
 .. _bleeding-edge archive: https://bitbucket.org/basti/pytest-localserver/get/tip.tar.gz
 .. _report: https://bitbucket.org/basti/pytest-localserver/issues/

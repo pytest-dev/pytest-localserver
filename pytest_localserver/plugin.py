@@ -21,7 +21,9 @@ def pytest_funcarg__httpserver(request):
     these values until they are changed or the server is stopped. A more
     convenient way to change these is ::
 
-        httpserver.serve_content(content=None, code=200, headers=None)
+        httpserver.serve_content(
+            content='My content', code=200,
+            headers={'content-type': 'text/plain'})
 
     The server address can be found in property
 
@@ -32,9 +34,16 @@ def pytest_funcarg__httpserver(request):
 
     Example::
 
+        import requests
+        def scrape(url):
+            html = requests.get(url).text
+            # some parsing happens here
+            # ...
+            return result
+
         def test_retrieve_some_content(httpserver):
-            httpserver.serve_content(open('cached-content.xml').read())
-            assert my_content_retrieval(httpserver.url) == 'Found it!'
+            httpserver.serve_content(open('cached-content.html').read())
+            assert scrape(httpserver.url) == 'Found it!'
 
     """
     from pytest_localserver import http
