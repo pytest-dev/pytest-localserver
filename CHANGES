@@ -1,5 +1,10 @@
+0.3.1 (2013-10-13)
+------------------
+
+Include tox config in release file.
+
 0.3 (2013-08-02)
---------------------
+----------------
 
 Ported to Python 3.2+. Support for Python 2.4/2.5 dropped!
 Added WSGI server
