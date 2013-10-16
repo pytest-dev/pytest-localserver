@@ -1,3 +1,9 @@
+0.3.2 (2013-10-16)
+------------------
+
+Added new SSL cerificate.
+Skipped all (not yet) working tests for pytest_localserver.https under Python 3.
+
 0.3.1 (2013-10-13)
 ------------------
 

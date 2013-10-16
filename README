@@ -98,6 +98,9 @@ poking around in the code itself.
 ``httpsserver``
     is the same as ``httpserver`` only with SSL encryption.
 
+    WARNING: SSL does not quite work under Python 3 yet as long as Werkzeug
+    does not support it fully!
+
 ``smtpserver``
     provides a threaded instance of ``smtpd.SMTPServer`` runnning on localhost.
     It has the following attributes:
