@@ -4,14 +4,13 @@
 # the license in the LICENSE file.
 
 import os.path
-from OpenSSL import SSL, tsafe
+from OpenSSL import tsafe
 
 from pytest_localserver.http import ContentServer
 
 #: default server certificate
-_here = os.path.abspath(os.path.dirname(__file__))
-DEFAULT_CERTIFICATE = os.path.join(_here, 'server.crt')
-DEFAULT_KEY = os.path.join(_here, 'server.key')
+DEFAULT_CERTIFICATE = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), 'server.pem')
 
 
 class SecureContentServer (ContentServer):
@@ -101,9 +100,6 @@ class SecureContentServer (ContentServer):
         :param key: location of file containing the server private key.
         :param cert: location of file containing server certificate.
         """
-        ctx = SSL.Context(SSL.SSLv23_METHOD)
-        ctx.use_privatekey_file(key)
-        ctx.use_certificate_file(cert)
 
         # monkeypatching OpenSSL
         # https://code.launchpad.net/~redtoad/pyopenssl/pyopenssl/+merge/178226
