@@ -189,7 +189,7 @@ I already have a couple of ideas for future versions:
        Having unsuccessfully tried to mock a server, I stumbled across 
        `linkchecker`_ which uses a the same idea to test its internals.
 
-.. _monkeypatching: http://pytest.org/monkeypatch.html
+.. _monkeypatching: http://pytest.org/latest/monkeypatch.html
 .. _pytest: http://pytest.org/
 .. _funcargs feature: http://pytest.org/latest/funcargs.html
 .. _linkchecker: http://linkchecker.sourceforge.net/
