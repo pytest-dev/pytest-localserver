@@ -62,7 +62,7 @@ class ContentServer(WSGIServer):
 
     def __init__(self, host='127.0.0.1', port=0, ssl_context=None):
         super(ContentServer, self).__init__(host, port, self, ssl_context=ssl_context)
-        self.content, self.code = (None, 204)  # HTTP 204: No Content
+        self.content, self.code = ('', 204)  # HTTP 204: No Content
         self.headers = {}
         self.show_post_vars = False
         self.compress = None
