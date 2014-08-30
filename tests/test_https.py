@@ -20,7 +20,7 @@ def test_httpsserver_funcarg(httpsserver):
 
 def test_server_does_not_serve_file_at_startup(httpsserver):
     assert httpsserver.code == 204
-    assert httpsserver.content is None
+    assert httpsserver.content == ''
 
 
 def test_server_is_killed(httpsserver):

@@ -20,7 +20,7 @@ def test_httpserver_funcarg(httpserver):
 
 def test_server_does_not_serve_file_at_startup(httpserver):
     assert httpserver.code == 204
-    assert httpserver.content is None
+    assert httpserver.content == ''
 
 
 def test_server_is_killed(httpserver):
