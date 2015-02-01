@@ -23,18 +23,6 @@ def test_server_does_not_serve_file_at_startup(httpsserver):
     assert httpsserver.content == ''
 
 
-def test_server_is_killed(httpsserver):
-    assert httpsserver.is_alive()
-    httpsserver.stop()
-    assert not httpsserver.is_alive()
-
-
-def test_server_is_deleted(httpsserver):
-    assert httpsserver.is_alive()
-    httpsserver.__del__()
-    assert not httpsserver.is_alive()
-
-
 @pytest.mark.xfail('sys.version_info[0] == 3', reason="Does not work under Python 3 yet!")
 def test_some_content_retrieval(httpsserver):
     httpsserver.serve_content('TEST!')

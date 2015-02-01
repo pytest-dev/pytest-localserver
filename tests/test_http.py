@@ -23,18 +23,6 @@ def test_server_does_not_serve_file_at_startup(httpserver):
     assert httpserver.content == ''
 
 
-def test_server_is_killed(httpserver):
-    assert httpserver.is_alive()
-    httpserver.stop()
-    assert not httpserver.is_alive()
-
-
-def test_server_is_deleted(httpserver):
-    assert httpserver.is_alive()
-    httpserver.__del__()  # need to call magic method here!
-    assert not httpserver.is_alive()
-
-
 def test_some_content_retrieval(httpserver):
     httpserver.serve_content('TEST!')
     resp = requests.get(httpserver.url)
