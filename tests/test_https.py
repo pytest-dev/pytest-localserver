@@ -23,7 +23,6 @@ def test_server_does_not_serve_file_at_startup(httpsserver):
     assert httpsserver.content == ''
 
 
-@pytest.mark.xfail('sys.version_info[0] == 3', reason="Does not work under Python 3 yet!")
 def test_some_content_retrieval(httpsserver):
     httpsserver.serve_content('TEST!')
     resp = requests.get(httpsserver.url, verify=False)
@@ -31,7 +30,6 @@ def test_some_content_retrieval(httpsserver):
     assert resp.status_code == 200
 
 
-@pytest.mark.xfail('sys.version_info[0] == 3', reason="Does not work under Python 3 yet!")
 def test_GET_request(httpsserver):
     httpsserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     resp = requests.get(httpsserver.url, headers={'User-Agent': 'Test method'}, verify=False)
@@ -40,22 +38,6 @@ def test_GET_request(httpsserver):
     assert 'text/plain' in resp.headers['Content-type']
 
 
-# FIXME get compression working!
-# def test_gzipped_GET_request(httpserver):
-#     httpserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
-#     httpserver.compress = 'gzip'
-#     resp = requests.get(httpserver.url, headers={
-#         'User-Agent': 'Test method',
-#         'Accept-encoding': 'gzip'
-#     }, verify=False)
-#     assert resp.text == 'TEST!'
-#     assert resp.status_code == 200
-#     assert resp.content_encoding == 'gzip'
-#     assert resp.headers['Content-type'] == 'text/plain'
-#     assert resp.headers['content-encoding'] == 'gzip'
-
-
-@pytest.mark.xfail('sys.version_info[0] == 3', reason="Does not work under Python 3 yet!")
 def test_HEAD_request(httpsserver):
     httpsserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     print(httpsserver.url)
