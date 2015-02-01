@@ -4,7 +4,6 @@
 # the license in the LICENSE file.
 
 import os.path
-from OpenSSL import tsafe
 
 from pytest_localserver.http import ContentServer
 
@@ -101,13 +100,7 @@ class SecureContentServer (ContentServer):
         :param cert: location of file containing server certificate.
         """
 
-        # monkeypatching OpenSSL
-        # https://code.launchpad.net/~redtoad/pyopenssl/pyopenssl/+merge/178226
-        def apply(fnc, args):
-            return fnc(*args)
-        tsafe.apply = apply
-
-        super(SecureContentServer, self).__init__(host, port, (key, cert))
+        super(SecureContentServer, self).__init__(host, port, ssl_context=(key, cert))
 
 
 if __name__ == '__main__':  # pragma: no cover
