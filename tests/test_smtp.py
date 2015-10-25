@@ -21,7 +21,7 @@ def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
     msg['From'] = from_
     msg['To'] = to
 
-    host, port = server
+    host, port = server[:2]
     server = smtplib.SMTP(host, port)
     server.set_debuglevel(1)
     server.sendmail(from_, to, msg.as_string())

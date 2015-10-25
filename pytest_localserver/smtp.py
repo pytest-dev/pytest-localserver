@@ -34,7 +34,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
     def __init__(self, host='localhost', port=0):
         smtpd.SMTPServer.__init__(self, (host, port), None)
         if self._localaddr[1] == 0:
-            self.addr = self.getsockname()
+            self.addr = self.socket.getsockname()
 
         self.outbox = []
 
