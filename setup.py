@@ -36,8 +36,8 @@ setup(
     license='MIT License',
     description='py.test plugin to test server connections locally.',
     long_description=read('README'),
-    url='http://bitbucket.org/basti/pytest-localserver/',
-    download_url='http://bitbucket.org/basti/pytest-localserver/downloads/',
+    url='http://bitbucket.org/pytest-dev/pytest-localserver/',
+    download_url='http://bitbucket.org/pytest-dev/pytest-localserver/downloads/',
 
     packages=['pytest_localserver'],
     install_requires=[
