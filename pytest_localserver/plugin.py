@@ -5,9 +5,11 @@
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
+import pytest
 
 
-def pytest_funcarg__httpserver(request):
+@pytest.fixture
+def httpserver(request):
     """The returned ``httpserver`` provides a threaded HTTP server instance
     running on a randomly assigned port on localhost. It can be taught which
     content (i.e. string) to serve with which response code and comes with
@@ -53,7 +55,8 @@ def pytest_funcarg__httpserver(request):
     return server
 
 
-def pytest_funcarg__httpsserver(request):
+@pytest.fixture
+def httpsserver(request):
     """The returned ``httpsserver`` (note the additional S!) provides a
     threaded HTTP server instance similar to funcarg ``httpserver`` but with
     SSL encryption.
@@ -65,7 +68,8 @@ def pytest_funcarg__httpsserver(request):
     return server
 
 
-def pytest_funcarg__smtpserver(request):
+@pytest.fixture
+def smtpserver(request):
     """The returned ``smtpserver`` provides a threaded instance of
     ``smtpd.SMTPServer`` running on localhost.  It has the following
     attributes:
