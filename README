@@ -120,7 +120,8 @@ server ::
         start_response(status, response_headers)
         return ['Hello world!\n']
 
-    def pytest_funcarg__testserver(request):
+    @pytest.fixture
+    def testserver(request):
         """Defines the testserver funcarg"""
         server = WSGIServer(application=simple_app)
         server.start()

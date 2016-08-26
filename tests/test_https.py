@@ -6,10 +6,9 @@ import requests
 from pytest_localserver import https, plugin
 
 
-def pytest_funcarg__httpsserver(request):
-    # define funcargs here again in order to run tests without having to
-    # install the plugin anew every single time
-    return plugin.pytest_funcarg__httpsserver(request)
+# define test fixture here again in order to run tests without having to
+# install the plugin anew every single time
+httpsserver = plugin.httpsserver
 
 
 def test_httpsserver_funcarg(httpsserver):

@@ -6,10 +6,9 @@ from pytest_localserver import http, plugin
 from pytest_localserver import VERSION
 
 
-def pytest_funcarg__httpserver(request):
-    # define funcargs here again in order to run tests without having to
-    # install the plugin anew every single time
-    return plugin.pytest_funcarg__httpserver(request)
+# define test fixture here again in order to run tests without having to
+# install the plugin anew every single time
+httpserver = plugin.httpserver
 
 
 def test_httpserver_funcarg(httpserver):

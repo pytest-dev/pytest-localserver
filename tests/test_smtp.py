@@ -28,10 +28,9 @@ def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
     server.quit()
 
 
-def pytest_funcarg__smtpserver(request):
-    # define funcargs here again in order to run tests without having to
-    # install the plugin anew every single time
-    return plugin.pytest_funcarg__smtpserver(request)
+# define test fixture here again in order to run tests without having to
+# install the plugin anew every single time
+smtpsserver = plugin.smtpserver
 
 
 def test_smtpserver_funcarg(smtpserver):
