@@ -1,4 +1,14 @@
-0.3.4 (2015-02-1)
+0.3.6 (2016-08-27)
+------------------
+
+Use @pytest.fixture to declare fixtures. Thanks Bruno Oliveira!
+
+0.3.5 (2015-10-25)
+------------------
+
+Add support for Python 3.4 and 3.5.
+
+0.3.4 (2015-02-01)
 ------------------
 
 Use werzeug>=0.10 which fices SSL problems.
