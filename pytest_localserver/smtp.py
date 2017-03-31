@@ -43,11 +43,14 @@ class Server (smtpd.SMTPServer, threading.Thread):
         self.threadName = self.__class__.__name__
         threading.Thread.__init__(self, name=self.threadName)
 
-    def process_message(self, peer, mailfrom, rcpttos, data):
+    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
         """
         Adds message to outbox.
         """
-        self.outbox += [email.message_from_string(data)]
+        try:
+            self.outbox += [email.message_from_bytes(data)]
+        except AttributeError:
+            self.outbox += [email.message_from_string(data)]
 
     def run(self):
         """
