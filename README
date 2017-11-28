@@ -95,6 +95,13 @@ poking around in the code itself.
 
     which will display them as parsable text.
 
+    If you need to inspect the requests sent to the server, a list of all
+    received requests can be found in property
+
+    * ``requests``
+
+    which is a list of ``werkzeug.wrappers.Request`` objects.
+
 ``httpsserver``
     is the same as ``httpserver`` only with SSL encryption.
 
