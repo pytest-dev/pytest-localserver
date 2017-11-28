@@ -2,7 +2,7 @@ from setuptools import setup, Command
 import sys
 
 
-VERSION = '0.3.7'
+VERSION = '0.4.0'
 
 
 def read(fname):
@@ -32,7 +32,7 @@ setup(
     name='pytest-localserver',
     version=VERSION,
     author='Sebastian Rahlf',
-    author_email='basti AT redtoad DOT de',
+    author_email='basti@redtoad.de',
     license='MIT License',
     description='py.test plugin to test server connections locally.',
     long_description=read('README'),
