@@ -29,6 +29,13 @@ def test_some_content_retrieval(httpserver):
     assert resp.status_code == 200
 
 
+def test_request_is_stored(httpserver):
+    httpserver.serve_content('TEST!')
+    assert len(httpserver.requests) == 0
+    resp = requests.get(httpserver.url)
+    assert len(httpserver.requests) == 1
+
+
 def test_GET_request(httpserver):
     httpserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
     resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})

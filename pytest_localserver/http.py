@@ -66,12 +66,14 @@ class ContentServer(WSGIServer):
         self.headers = {}
         self.show_post_vars = False
         self.compress = None
+        self.requests = []
 
     def __call__(self, environ, start_response):
         """
         This is the WSGI application.
         """
         request = Request(environ)
+        self.requests.append(request)
         if (request.content_type == 'application/x-www-form-urlencoded'
         and request.method == 'POST' and self.show_post_vars):
             content = json.dumps(request.form)
