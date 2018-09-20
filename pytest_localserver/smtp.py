@@ -57,8 +57,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
             def __init__(self, **kwds):
                 vars(self).update(kwds)
 
-        message.details = lambda: None
-        Bunch(
+        message.details = Bunch(
             peer=peer,
             mailfrom=mailfrom,
             rcpttos=rcpttos,
