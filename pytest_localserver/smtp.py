@@ -52,7 +52,13 @@ class Server (smtpd.SMTPServer, threading.Thread):
         except AttributeError:
             message = email.message_from_string(data)
         # on the message, also set the envelope details
-        message.details = dict(
+
+        class Bunch:
+            def __init__(self, **kwds):
+                vars(self).update(kwds)
+
+        message.details = lambda: None
+        Bunch(
             peer=peer,
             mailfrom=mailfrom,
             rcpttos=rcpttos,
