@@ -1,9 +1,6 @@
-import gzip
 import requests
-import six
 
 from pytest_localserver import http, plugin
-from pytest_localserver import VERSION
 
 
 # define test fixture here again in order to run tests without having to
