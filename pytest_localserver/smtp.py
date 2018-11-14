@@ -10,8 +10,11 @@
 import asyncore
 import email
 import smtpd
+import sys
 import threading
 
+
+PY35_OR_NEWER = sys.version_info[:2] >= (3, 5)
 
 class Server (smtpd.SMTPServer, threading.Thread):
 
@@ -32,7 +35,12 @@ class Server (smtpd.SMTPServer, threading.Thread):
     WAIT_BETWEEN_CHECKS = 0.001
 
     def __init__(self, host='localhost', port=0):
-        smtpd.SMTPServer.__init__(self, (host, port), None)
+        # Workaround for deprecated signature in Python 3.6
+        if PY35_OR_NEWER:
+            smtpd.SMTPServer.__init__(self, (host, port), None, decode_data=True)
+        else:
+            smtpd.SMTPServer.__init__(self, (host, port), None)
+
         if self._localaddr[1] == 0:
             self.addr = self.socket.getsockname()
 
