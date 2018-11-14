@@ -56,9 +56,22 @@ class Server (smtpd.SMTPServer, threading.Thread):
         Adds message to outbox.
         """
         try:
-            self.outbox += [email.message_from_bytes(data)]
+            message = email.message_from_bytes(data)
         except AttributeError:
-            self.outbox += [email.message_from_string(data)]
+            message = email.message_from_string(data)
+        # on the message, also set the envelope details
+
+        class Bunch:
+            def __init__(self, **kwds):
+                vars(self).update(kwds)
+
+        message.details = Bunch(
+            peer=peer,
+            mailfrom=mailfrom,
+            rcpttos=rcpttos,
+            **kwargs
+        )
+        self.outbox.append(message)
 
     def run(self):
         """

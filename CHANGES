@@ -1,3 +1,9 @@
+0.5 (2018-09-20)
+----------------
+
+New feature: SMTP email message objects now include a ``details`` property
+capturing the envelope details.
+
 0.4.2 (2018-11-14)
 ----------------
 

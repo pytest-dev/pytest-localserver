@@ -65,6 +65,9 @@ def test_send_email(smtpserver):
     assert msg['To'] == 'alice@example.com'
     assert msg['From'] == 'webmaster@example.com'
     assert msg['Subject'] == 'Your e-mail is getting there'
+    assert msg.details.rcpttos == ['alice@example.com']
+    assert msg.details.peer
+    assert msg.details.mailfrom
 
     # send another e-mail
     send_plain_email(
