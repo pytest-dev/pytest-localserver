@@ -1,3 +1,9 @@
+0.4.2 (2018-11-14)
+----------------
+
+Fix support for Python 3.6 (fixes #21).
+Add support for Python 3.7.
+
 0.4.1 (2017-11-28)
 ----------------
 
