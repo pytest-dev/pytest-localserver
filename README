@@ -1,3 +1,8 @@
+At the moment this package is not actively maintained and its future is somewhat
+uncertain. If you would be interested in maintaining or co-maintaining it,
+please contribute to the discussion at
+https://github.com/pytest-dev/pytest/issues/7857.
+
 ==================
 pytest-localserver
 ==================
