@@ -80,7 +80,7 @@ class ContentServer(WSGIServer):
         else:
             content = self.content
 
-        response = Response(status=self.code)
+        response = Response(response=self.content, status=self.code)
         response.headers.clear()
         response.headers.extend(self.headers)
 
@@ -89,7 +89,6 @@ class ContentServer(WSGIServer):
         #     content = gzip.compress(content.encode('utf-8'))
         #     response.content_encoding = 'gzip'
 
-        response.data = content
         return response(environ, start_response)
 
     def serve_content(self, content, code=200, headers=None):
@@ -101,6 +100,17 @@ class ContentServer(WSGIServer):
         :param code: HTTP status code
         :param headers: HTTP headers to be returned
         """
+        if not isinstance(content, (str, bytes, list, tuple)):
+            # If content is an iterable which is not known to be a string,
+            # bytes, or sequence, it might be something that can only be iterated
+            # through once, in which case we need to cache it so it can be reused
+            # to handle multiple requests.
+            try:
+                content = tuple(iter(content))
+            except TypeError:
+                # this probably means that content is not iterable, so just go
+                # ahead in case it's some type that Response knows how to handle
+                pass
         self.content, self.code = (content, code)
         if headers:
             self.headers = headers
