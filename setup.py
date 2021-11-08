@@ -33,6 +33,8 @@ setup(
     version=VERSION,
     author='Sebastian Rahlf',
     author_email='basti@redtoad.de',
+    maintainer='David Zaslavsky',
+    maintainer_email='diazona@ellipsix.net',
     license='MIT License',
     description='py.test plugin to test server connections locally.',
     long_description=read('README'),
