@@ -149,7 +149,7 @@ You can install the plugin by running ::
     pip install pytest-localserver
 
 Alternatively, get the latest stable version from `PyPI`_ or the latest
-`bleeding-edge archive`_ from bitbucket.org.
+`bleeding-edge archive`_ from Github.
 
 License and Credits
 ===================
@@ -174,7 +174,7 @@ Development and future plans
 Feel free to clone the repository and add your own changes. Pull requests are
 always welcome!::
 
-    hg clone https://bitbucket.org/pytest-dev/pytest-localserver
+    git clone https://github.com/pytest-dev/pytest-localserver
 
 If you find any bugs, please file a `report`_.
 
@@ -200,8 +200,8 @@ I already have a couple of ideas for future versions:
 .. _linkchecker: http://linkchecker.sourceforge.net/
 .. _WSGI application: http://www.python.org/dev/peps/pep-0333/
 .. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
-.. _bleeding-edge archive: https://bitbucket.org/pytest-dev/pytest-localserver/get/tip.tar.gz
-.. _report: https://bitbucket.org/pytest-dev/pytest-localserver/issues/
+.. _bleeding-edge: https://github.com/pytest-dev/pytest-localserver
+.. _report: https://github.com/pytest-dev/pytest-localserver/issues/
 .. _tox: http://testrun.org/tox/
 .. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _Mailsink recipe: http://code.activestate.com/recipes/440690/
