@@ -89,7 +89,7 @@ class SecureContentServer (ContentServer):
 
     A more advanced tutorial can be found `here`_.
 
-    .. _pytest-localserver CA: https://bitbucket.org/pytest-dev/pytest-localserver/src/tip/pytest_localserver/ca.crt
+    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 
