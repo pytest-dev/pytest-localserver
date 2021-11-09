@@ -58,6 +58,7 @@ setup(
 
     keywords='py.test pytest server localhost http smtp',
     classifiers=[
+        'Frameworks :: Pytest',
         'Operating System :: OS Independent',
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
