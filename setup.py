@@ -37,7 +37,7 @@ setup(
     maintainer_email='diazona@ellipsix.net',
     license='MIT License',
     description='py.test plugin to test server connections locally.',
-    long_description=read('README'),
+    long_description=read('README.rst'),
     url='https://github.com/pytest-dev/pytest-localserver',
 
     packages=['pytest_localserver'],
