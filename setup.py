@@ -33,11 +33,12 @@ setup(
     version=VERSION,
     author='Sebastian Rahlf',
     author_email='basti@redtoad.de',
+    maintainer='David Zaslavsky',
+    maintainer_email='diazona@ellipsix.net',
     license='MIT License',
     description='py.test plugin to test server connections locally.',
-    long_description=read('README'),
-    url='http://bitbucket.org/pytest-dev/pytest-localserver/',
-    download_url='http://bitbucket.org/pytest-dev/pytest-localserver/downloads/',
+    long_description=read('README.rst'),
+    url='https://github.com/pytest-dev/pytest-localserver',
 
     packages=['pytest_localserver'],
     install_requires=[

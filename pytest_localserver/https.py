@@ -89,7 +89,7 @@ class SecureContentServer (ContentServer):
 
     A more advanced tutorial can be found `here`_.
 
-    .. _pytest-localserver CA: https://bitbucket.org/pytest-dev/pytest-localserver/src/tip/pytest_localserver/ca.crt
+    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 
@@ -121,7 +121,7 @@ if __name__ == '__main__':  # pragma: no cover
         path = sys.argv[1]
     except IndexError:
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..', 'README')
+            os.path.dirname(os.path.abspath(__file__)), '..', 'README.rst')
 
     server.serve_content(open(path).read(), 302)
 

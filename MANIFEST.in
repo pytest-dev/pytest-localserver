@@ -1,6 +1,6 @@
 include LICENSE
 include MANIFEST.in
-include README
+include README.rst
 include pytest_localserver/server.*
 include pytest_localserver/ca.*
 recursive-include tests *.py

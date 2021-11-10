@@ -1,8 +1,3 @@
-At the moment this package is not actively maintained and its future is somewhat
-uncertain. If you would be interested in maintaining or co-maintaining it,
-please contribute to the discussion at
-https://github.com/pytest-dev/pytest/issues/7857.
-
 ==================
 pytest-localserver
 ==================
@@ -82,10 +77,10 @@ poking around in the code itself.
     * ``headers`` - response headers (dict)
 
     Once these attribute are set, all subsequent requests will be answered with
-    these values until they are changed or the server is stopped. A more 
+    these values until they are changed or the server is stopped. A more
     convenient way to change these is ::
 
-        httpserver.serve_content(content=None, code=200, headers=None) 
+        httpserver.serve_content(content=None, code=200, headers=None)
 
     The server address can be found in property
 
@@ -162,12 +157,12 @@ License and Credits
 This plugin is released under the MIT license. You can find the full text of
 the license in the LICENSE file.
 
-Copyright (C) 2010-2013 Sebastian Rahlf and others (see AUTHORS).
+Copyright (C) 2010-2021 Sebastian Rahlf and others (see AUTHORS).
 
 Some parts of this package is based on ideas or code from other people:
 
 - I borrowed some implementation ideas for the httpserver from `linkchecker`_.
-- The implementation for the SMTP server is based on the `Mailsink recipe`_ by 
+- The implementation for the SMTP server is based on the `Mailsink recipe`_ by
   Adam Feuer, Matt Branthwaite and Troy Frever.
 - The HTTPS implementation is based on work by `Sebastien Martini`_.
 
@@ -196,7 +191,7 @@ I already have a couple of ideas for future versions:
 
 .. [1] The idea for this project was born when I needed to check that `a piece
        of software`_ behaved itself when receiving HTTP error codes 404 and 500.
-       Having unsuccessfully tried to mock a server, I stumbled across 
+       Having unsuccessfully tried to mock a server, I stumbled across
        `linkchecker`_ which uses a the same idea to test its internals.
 
 .. _monkeypatching: http://pytest.org/latest/monkeypatch.html

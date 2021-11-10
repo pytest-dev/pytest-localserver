@@ -121,7 +121,7 @@ if __name__ == '__main__':  # pragma: no cover
         path = sys.argv[1]
     except IndexError:
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..', 'README')
+            os.path.dirname(os.path.abspath(__file__)), '..', 'README.rst')
 
     app.serve_content(open(path).read(), 302)
 
