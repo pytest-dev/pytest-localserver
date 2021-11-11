@@ -33,10 +33,19 @@ class SecureContentServer (ContentServer):
 
     If you want to create your own server certificate, you need `OpenSSL`_
     installed on your machine. A self-signed certificate consists of a
-    certificate and a private key for your server. It can be created with the
-    following command::
+    certificate and a private key for your server. It can be created with
+    a command like this, using OpenSSL 1.1.1::
 
-        openssl req -new -x509 -keyout server.pem -out server.pem -nodes
+        openssl req \
+            -x509 \
+            -newkey rsa:4096 \
+            -sha256 \
+            -days 3650 \
+            -nodes \
+            -keyout server.pem \
+            -out server.pem \
+            -subj "/CN=127.0.0.1/O=pytest-localserver/OU=Testing Dept." \
+            -addext "subjectAltName=DNS:localhost"
 
     Note that both key and certificate are in a single file now named
     ``server.pem``.
@@ -47,28 +56,39 @@ class SecureContentServer (ContentServer):
     Generate a server key and request for signing (csr). Make sure that the
     common name (CN) is your IP address/domain name (e.g. ``localhost``). ::
 
-        openssl genrsa -des3 -out server.key 4096
-        openssl req -new -key server.key -out server.csr
+        openssl genpkey \
+            -algorithm RSA \
+            -pkeyopt rsa_keygen_bits:4096 \
+            -out server.key
+        openssl req \
+            -new \
+            -addext "subjectAltName=DNS:localhost" \
+            -key server.key \
+            -out server.csr
 
     Generate your own CA. Make sure that this time the CN is *not* your IP
     address/domain name (e.g. ``localhost CA``). ::
 
-        openssl genrsa -des3 -out ca.key 4096
-        openssl req -new -x509 -key ca.key -out ca.crt
+        openssl genpkey \
+            -algorithm RSA \
+            -pkeyopt rsa_keygen_bits:4096 \
+            -aes256 \
+            -out ca.key
+        openssl req \
+            -new \
+            -x509 \
+            -key ca.key \
+            -out ca.crt
 
     Sign the certificate signing request (csr) with the self-created CA that
-    you made earlier. If you issue subsequent certificates and your browser
-    already knows about previous ones simply increment the serial number. ::
+    you made earlier. Note that OpenSSL does not copy the subjectAltName field
+    from the request (csr), so you have to provide it again as a file. If you
+    issue subsequent certificates and your browser already knows about previous
+    ones simply increment the serial number. ::
 
+        echo "subjectAltName=DNS:localhost" >server-extensions.txt
         openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key \
-            -set_serial 01 -out server.crt
-
-    Make a server.key which doesn't cause HTTPSServer to prompt for a
-    password::
-
-        openssl rsa -in server.key -out server.key.insecure
-        mv server.key server.key.secure
-        mv server.key.insecure server.key
+            -set_serial 01 -extfile server-extensions.txt -out server.crt
 
     Create a single file for both key and certificate::
 
