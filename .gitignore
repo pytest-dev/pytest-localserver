@@ -1,0 +1,17 @@
+# test files
+.tox
+junit-*.xml
+
+# build files
+build
+dist
+*.egg-info
+
+# project files
+.idea
+.project
+.pydevproject
+
+# compiled python files
+*.pyc
+*.pyo
