@@ -1,3 +1,11 @@
+0.5.1 (2021-11-18)
+------------------
+
+Regenerate included certificate to use SHA-256 hash to avoid OpenSSL errors (fixes #2).
+Add support for Python 3.10.
+Drop support for Python 2.6.
+Migrate repository to Github and update project metadata.
+
 0.5 (2018-09-20)
 ----------------
 
