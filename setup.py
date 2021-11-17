@@ -2,19 +2,11 @@ from setuptools import setup, Command
 import sys
 
 
-VERSION = '0.5.1.post0'
-
-
 def read(fname):
     # makes sure that setup can be executed from a different location
     import os.path
     _here = os.path.abspath(os.path.dirname(__file__))
     return open(os.path.join(_here, fname)).read()
-
-# make sure that versions match before uploading anything to the cheeseshop
-if 'upload' in sys.argv or 'register' in sys.argv:
-    import pytest_localserver
-    assert pytest_localserver.VERSION == VERSION
 
 
 class PyTest(Command):
@@ -30,7 +22,6 @@ class PyTest(Command):
 
 setup(
     name='pytest-localserver',
-    version=VERSION,
     author='Sebastian Rahlf',
     author_email='basti@redtoad.de',
     maintainer='David Zaslavsky',
