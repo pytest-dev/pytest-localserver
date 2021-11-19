@@ -149,7 +149,7 @@ You can install the plugin by running ::
     pip install pytest-localserver
 
 Alternatively, get the latest stable version from `PyPI`_ or the latest
-`bleeding-edge archive`_ from Github.
+`bleeding-edge`_ from Github.
 
 License and Credits
 ===================
