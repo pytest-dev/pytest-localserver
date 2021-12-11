@@ -7,6 +7,7 @@ import json
 import sys
 import threading
 
+from werkzeug.datastructures import Headers
 from werkzeug.serving import make_server
 from werkzeug.wrappers import Response, Request
 
@@ -111,9 +112,10 @@ class ContentServer(WSGIServer):
                 # this probably means that content is not iterable, so just go
                 # ahead in case it's some type that Response knows how to handle
                 pass
-        self.content, self.code = (content, code)
+        self.content = content
+        self.code = code
         if headers:
-            self.headers = headers
+            self.headers = Headers(headers)
 
 
 if __name__ == '__main__':  # pragma: no cover
