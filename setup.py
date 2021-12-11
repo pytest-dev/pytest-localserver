@@ -41,6 +41,7 @@ setup(
     url='https://github.com/pytest-dev/pytest-localserver',
 
     packages=['pytest_localserver'],
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*',
     install_requires=[
         'werkzeug>=0.10'
     ],
