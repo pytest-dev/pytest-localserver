@@ -1,3 +1,8 @@
+0.5.1.post0 (2021-12-13)
+------------------------
+
+Explicitly list supported Python versions with python_requires in setup.py.
+
 0.5.1 (2021-11-18)
 ------------------
 

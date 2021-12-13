@@ -2,7 +2,7 @@ from setuptools import setup, Command
 import sys
 
 
-VERSION = '0.5.1'
+VERSION = '0.5.1.post0'
 
 
 def read(fname):
