@@ -178,8 +178,7 @@ always welcome!::
 
 If you find any bugs, please file a `report`_.
 
-Test can be run with tox. Note that you need virtualenv<1.8 to run tests for
-Python 2.4.
+Test can be run with tox.
 
 I already have a couple of ideas for future versions:
 
