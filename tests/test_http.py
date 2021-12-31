@@ -1,3 +1,5 @@
+import itertools
+import pytest
 import requests
 
 from pytest_localserver import http, plugin
@@ -6,6 +8,9 @@ from pytest_localserver import http, plugin
 # define test fixture here again in order to run tests without having to
 # install the plugin anew every single time
 httpserver = plugin.httpserver
+
+
+transfer_encoded = pytest.mark.parametrize('transfer_encoding_header', ['Transfer-encoding', 'Transfer-Encoding', 'transfer-encoding', 'TRANSFER-ENCODING'])
 
 
 def test_httpserver_funcarg(httpserver):
@@ -76,3 +81,206 @@ def test_HEAD_request(httpserver):
 #     resp = requests.post(httpserver.url, data={'data': 'value'}, headers=headers)
 #     assert resp.json() == {'data': 'value'}
 #     assert resp.status_code == 200
+
+
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.YES, http.Chunked.AUTO, http.Chunked.NO])
+def test_chunked_attribute_without_header(httpserver, chunked_flag):
+    """
+    Test that passing the chunked attribute to serve_content() properly sets
+    the chunked property of the server.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain'},
+        chunked=chunked_flag
+    )
+    assert httpserver.chunked == chunked_flag
+
+
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.YES, http.Chunked.AUTO, http.Chunked.NO])
+def test_chunked_attribute_with_header(httpserver, chunked_flag):
+    """
+    Test that passing the chunked attribute to serve_content() properly sets
+    the chunked property of the server even when the transfer-encoding header is
+    also set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain', 'Transfer-encoding': 'chunked'},
+        chunked=chunked_flag
+    )
+    assert httpserver.chunked == chunked_flag
+
+
+@transfer_encoded
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.YES, http.Chunked.AUTO])
+def test_GET_request_chunked_parameter(httpserver, transfer_encoding_header, chunked_flag):
+    """
+    Test that passing YES or AUTO as the chunked parameter to serve_content()
+    causes the response to be sent using chunking when the Transfer-encoding
+    header is also set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain', transfer_encoding_header: 'chunked'},
+        chunked=chunked_flag
+    )
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    assert resp.text == 'TEST!test'
+    assert resp.status_code == 200
+    assert 'text/plain' in resp.headers['Content-type']
+    assert 'chunked' in resp.headers['Transfer-encoding']
+
+
+@transfer_encoded
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.YES, http.Chunked.AUTO])
+def test_GET_request_chunked_attribute(httpserver, transfer_encoding_header, chunked_flag):
+    """
+    Test that setting the chunked attribute of httpserver to YES or AUTO
+    causes the response to be sent using chunking when the Transfer-encoding
+    header is also set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain', transfer_encoding_header: 'chunked'}
+    )
+    httpserver.chunked = chunked_flag
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    assert resp.text == 'TEST!test'
+    assert resp.status_code == 200
+    assert 'text/plain' in resp.headers['Content-type']
+    assert 'chunked' in resp.headers['Transfer-encoding']
+
+
+@transfer_encoded
+def test_GET_request_not_chunked(httpserver, transfer_encoding_header):
+    """
+    Test that setting the chunked attribute of httpserver to NO causes
+    the response not to be sent using chunking even if the Transfer-encoding
+    header is set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain', transfer_encoding_header: 'chunked'},
+        chunked=http.Chunked.NO
+    )
+    with pytest.raises(requests.exceptions.ChunkedEncodingError):
+        resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+
+
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.NO, http.Chunked.AUTO])
+def test_GET_request_chunked_parameter_no_header(httpserver, chunked_flag):
+    """
+    Test that passing NO or AUTO as the chunked parameter to serve_content()
+    causes the response not to be sent using chunking when the Transfer-encoding
+    header is not set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain'},
+        chunked=chunked_flag
+    )
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    assert resp.text == 'TEST!test'
+    assert resp.status_code == 200
+    assert 'text/plain' in resp.headers['Content-type']
+    assert 'Transfer-encoding' not in resp.headers
+
+
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.NO, http.Chunked.AUTO])
+def test_GET_request_chunked_attribute_no_header(httpserver, chunked_flag):
+    """
+    Test that setting the chunked attribute of httpserver to NO or AUTO
+    causes the response not to be sent using chunking when the Transfer-encoding
+    header is not set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain'}
+    )
+    httpserver.chunked = chunked_flag
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    assert resp.text == 'TEST!test'
+    assert resp.status_code == 200
+    assert 'text/plain' in resp.headers['Content-type']
+    assert 'Transfer-encoding' not in resp.headers
+
+
+def test_GET_request_chunked_no_header(httpserver):
+    """
+    Test that setting the chunked attribute of httpserver to YES causes
+    the response to be sent using chunking even if the Transfer-encoding
+    header is not set.
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain'},
+        chunked=http.Chunked.YES
+    )
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    # Without the Transfer-encoding header set, requests does not undo the chunk
+    # encoding so it comes through as "raw" chunks
+    assert resp.text == '5\r\nTEST!\r\n4\r\ntest\r\n0\r\n\r\n'
+
+
+def _format_chunk(chunk):
+    r = repr(chunk)
+    if len(r) <= 40:
+        return r
+    else:
+        return r[:13] + '...' + r[-14:] + ' (length {0})'.format(len(chunk))
+
+
+def _compare_chunks(expected, actual):
+    __tracebackhide__ = True
+    if expected != actual:
+        message = [_format_chunk(expected) + ' != ' + _format_chunk(actual)]
+        if type(expected) == type(actual):
+            for i, (e, a) in enumerate(itertools.zip_longest(expected, actual, fillvalue='<end>')):
+                if e != a:
+                    message += [
+                        '  Chunks differ at index {}:'.format(i),
+                        '    Expected: ' + (repr(expected[i:i+5]) + '...' if e != '<end>' else '<end>'),
+                        '    Found:    ' + (repr(actual[i:i+5]) + '...' if a != '<end>' else '<end>')
+                    ]
+                    break
+        pytest.fail('\n'.join(message))
+
+
+@pytest.mark.parametrize('chunk_size', [400, 499, 500, 512, 750, 1024, 4096, 8192])
+def test_GET_request_large_chunks(httpserver, chunk_size):
+    """
+    Test that a response with large chunks comes through correctly
+    """
+    body = b'0123456789abcdef' * 1024  # 16 kb total
+    # Split body into fixed-size chunks, from https://stackoverflow.com/a/18854817/56541
+    chunks = [body[0 + i:chunk_size + i] for i in range(0, len(body), chunk_size)]
+    httpserver.serve_content(
+        chunks,
+        headers={'Content-type': 'text/plain', 'Transfer-encoding': 'chunked'},
+        chunked=http.Chunked.YES
+    )
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'}, stream=True)
+    assert resp.status_code == 200
+    text = b''
+    for original_chunk, received_chunk in itertools.zip_longest(chunks, resp.iter_content(chunk_size=None)):
+        _compare_chunks(original_chunk, received_chunk)
+        text += received_chunk
+    assert text == body
+    assert 'chunked' in resp.headers['Transfer-encoding']
+
+
+@pytest.mark.parametrize('chunked_flag', [http.Chunked.YES, http.Chunked.AUTO])
+def test_GET_request_chunked_no_content_length(httpserver, chunked_flag):
+    """
+    Test that a chunked response does not include a Content-length header
+    """
+    httpserver.serve_content(
+        ('TEST!', 'test'),
+        headers={'Content-type': 'text/plain', 'Transfer-encoding': 'chunked'},
+        chunked=chunked_flag
+    )
+    resp = requests.get(httpserver.url, headers={'User-Agent': 'Test method'})
+    assert resp.status_code == 200
+    assert 'Transfer-encoding' in resp.headers
+    assert 'Content-length' not in resp.headers

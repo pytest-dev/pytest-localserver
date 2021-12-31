@@ -3,10 +3,13 @@
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
 
+import enum
+import itertools
 import json
 import sys
 import threading
 
+from werkzeug.datastructures import Headers
 from werkzeug.serving import make_server
 from werkzeug.wrappers import Response, Request
 
@@ -39,6 +42,21 @@ class WSGIServer(threading.Thread):
         return '%s://%s:%i' % (proto, host, port)
 
 
+class Chunked(enum.Enum):
+    NO = False
+    YES = True
+    AUTO = None
+
+    def __bool__(self):
+        return bool(self.value)
+
+
+def _encode_chunk(chunk, charset):
+    if isinstance(chunk, str):
+        chunk = chunk.encode(charset)
+    return '{0:x}'.format(len(chunk)).encode(charset) + b'\r\n' + chunk + b'\r\n'
+
+
 class ContentServer(WSGIServer):
 
     """
@@ -67,6 +85,7 @@ class ContentServer(WSGIServer):
         self.show_post_vars = False
         self.compress = None
         self.requests = []
+        self.chunked = Chunked.NO
 
     def __call__(self, environ, start_response):
         """
@@ -80,7 +99,21 @@ class ContentServer(WSGIServer):
         else:
             content = self.content
 
-        response = Response(status=self.code)
+        if (
+            self.chunked == Chunked.YES
+            or (self.chunked == Chunked.AUTO and 'chunked' in self.headers.get('Transfer-encoding', ''))
+        ):
+            # If the code below ever changes to allow setting the charset of
+            # the Response object, the charset used here should also be changed
+            # to match. But until that happens, use UTF-8 since it is Werkzeug's
+            # default.
+            charset = 'utf-8'
+            if isinstance(content, (str, bytes)):
+                content = (_encode_chunk(content, charset), '0\r\n\r\n')
+            else:
+                content = itertools.chain((_encode_chunk(item, charset) for item in content), ['0\r\n\r\n'])
+
+        response = Response(response=content, status=self.code)
         response.headers.clear()
         response.headers.extend(self.headers)
 
@@ -89,10 +122,9 @@ class ContentServer(WSGIServer):
         #     content = gzip.compress(content.encode('utf-8'))
         #     response.content_encoding = 'gzip'
 
-        response.data = content
         return response(environ, start_response)
 
-    def serve_content(self, content, code=200, headers=None):
+    def serve_content(self, content, code=200, headers=None, chunked=Chunked.NO):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
@@ -100,10 +132,24 @@ class ContentServer(WSGIServer):
         :param content: content to be displayed
         :param code: HTTP status code
         :param headers: HTTP headers to be returned
+        :param chunked: whether to apply chunked transfer encoding to the content
         """
-        self.content, self.code = (content, code)
+        if not isinstance(content, (str, bytes, list, tuple)):
+            # If content is an iterable which is not known to be a string,
+            # bytes, or sequence, it might be something that can only be iterated
+            # through once, in which case we need to cache it so it can be reused
+            # to handle multiple requests.
+            try:
+                content = tuple(iter(content))
+            except TypeError:
+                # this probably means that content is not iterable, so just go
+                # ahead in case it's some type that Response knows how to handle
+                pass
+        self.content = content
+        self.code = code
+        self.chunked = chunked
         if headers:
-            self.headers = headers
+            self.headers = Headers(headers)
 
 
 if __name__ == '__main__':  # pragma: no cover

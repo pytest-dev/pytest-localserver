@@ -73,14 +73,25 @@ poking around in the code itself.
     following attributes:
 
     * ``code`` - HTTP response code (int)
-    * ``content`` - content of next response (str)
+    * ``content`` - content of next response (str, bytes, or iterable of either)
     * ``headers`` - response headers (dict)
+    * ``chunked`` - whether to chunk-encode the response (enumeration)
 
-    Once these attribute are set, all subsequent requests will be answered with
+    Once these attributes are set, all subsequent requests will be answered with
     these values until they are changed or the server is stopped. A more
     convenient way to change these is ::
 
-        httpserver.serve_content(content=None, code=200, headers=None)
+        httpserver.serve_content(content=None, code=200, headers=None, chunked=pytest_localserver.http.Chunked.NO)
+
+    The ``chunked`` atribute or parameter can be set to
+
+    * ``Chunked.YES``, telling the server to always apply chunk encoding
+    * ``Chunked.NO``, telling the server to never apply chunk encoding
+    * ``Chunked.AUTO``, telling the server to apply chunk encoding only if
+        the ``Transfer-Encoding`` header includes ``chunked``
+
+    If chunk encoding is applied, each str or bytes in ``content`` becomes one
+    chunk in the response.
 
     The server address can be found in property
 
