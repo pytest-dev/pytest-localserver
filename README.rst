@@ -83,7 +83,7 @@ poking around in the code itself.
 
         httpserver.serve_content(content=None, code=200, headers=None, chunked=pytest_localserver.http.Chunked.NO)
 
-    The ``chunked`` atribute or parameter can be set to
+    The ``chunked`` attribute or parameter can be set to
 
     * ``Chunked.YES``, telling the server to always apply chunk encoding
     * ``Chunked.NO``, telling the server to never apply chunk encoding
@@ -117,7 +117,7 @@ poking around in the code itself.
     is the same as ``httpserver`` only with SSL encryption.
 
 ``smtpserver``
-    provides a threaded instance of ``smtpd.SMTPServer`` runnning on localhost.
+    provides a threaded instance of ``smtpd.SMTPServer`` running on localhost.
     It has the following attributes:
 
     * ``addr`` - server address as tuple (host as str, port as int)
