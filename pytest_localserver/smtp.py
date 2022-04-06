@@ -7,14 +7,9 @@
 # Written by Adam Feuer, Matt Branthwaite, and Troy Frever
 # which is Licensed under the PSF License
 
-import asyncore
+import aiosmtpd.controller
 import email
-import smtpd
 import sys
-import threading
-
-
-PY35_OR_NEWER = sys.version_info[:2] >= (3, 5)
 
 
 class MessageDetails:
@@ -28,10 +23,28 @@ class MessageDetails:
             self.rcpt_options = rcpt_options
 
 
-class Server (smtpd.SMTPServer, threading.Thread):
+class Handler:
+    def __init__(self):
+        self.outbox = []
+
+    async def handle_DATA(self, server, session, envelope):
+        message = email.message_from_bytes(envelope.content)
+        message.details = MessageDetails(session.peer, envelope.mail_from, envelope.rcpt_tos)
+        self.outbox.append(message)
+        return '250 OK'
+
+
+class Server(aiosmtpd.controller.Controller):
 
     """
-    Small SMTP test server. Try the following snippet for sending mail::
+    Small SMTP test server.
+
+    This is little more than a wrapper around aiosmtpd.controller.Controller
+    which offers a slightly different interface for backward compatibility with
+    earlier versions of pytest-localserver. You can just as well use a standard
+    Controller and pass it a Handler instance.
+
+    Here is how to use this class for sending an email, if you really need to::
 
         server = Server(port=8080)
         server.start()
@@ -44,64 +57,97 @@ class Server (smtpd.SMTPServer, threading.Thread):
 
     """
 
-    WAIT_BETWEEN_CHECKS = 0.001
-
     def __init__(self, host='localhost', port=0):
-        # Workaround for deprecated signature in Python 3.6
-        if PY35_OR_NEWER:
-            smtpd.SMTPServer.__init__(self, (host, port), None, decode_data=True)
-        else:
-            smtpd.SMTPServer.__init__(self, (host, port), None)
-
-        if self._localaddr[1] == 0:
-            self.addr = self.socket.getsockname()
-
-        self.outbox = []
-
-        # initialise thread
-        self._stopevent = threading.Event()
-        self.threadName = self.__class__.__name__
-        threading.Thread.__init__(self, name=self.threadName)
-
-    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
-        """
-        Adds message to outbox.
-        """
         try:
-            message = email.message_from_bytes(data)
+            super().__init__(Handler(), hostname=host, port=port, server_hostname=host)
+        except TypeError:
+            # for aiosmtpd <1.3
+            super().__init__(Handler(), hostname=host, port=port)
+
+    @property
+    def outbox(self):
+        return self.handler.outbox
+
+    def _set_server_socket_attributes(self):
+        """
+        Set the addr and port attributes on this Server instance, if they're not
+        already set.
+        """
+
+        # I split this out into its own method to allow running this code in
+        # aiosmtpd <1.4, which doesn't have the _trigger_server() method on
+        # the Controller class. If I put it directly in _trigger_server(), it
+        # would fail when calling super()._trigger_server(). In the future, when
+        # we can safely require aiosmtpd >=1.4, this method can be inlined
+        # directly into _trigger_server().
+        if hasattr(self, 'addr'):
+            assert hasattr(self, 'port')
+            return
+
+        self.addr = self.server.sockets[0].getsockname()
+
+        # Work around a bug/missing feature in aiosmtpd (https://github.com/aio-libs/aiosmtpd/issues/276)
+        if self.port == 0:
+            self.port = self.addr[1]
+            assert self.port != 0
+
+    def _trigger_server(self):
+        self._set_server_socket_attributes()
+        super()._trigger_server()
+
+    def is_alive(self):
+        return self._thread is not None and self._thread.is_alive()
+
+    @property
+    def accepting(self):
+        try:
+            return self.server.is_serving()
         except AttributeError:
-            message = email.message_from_string(data)
-        # on the message, also set the envelope details
+            # asyncio.base_events.Server.is_serving() only exists in Python 3.6
+            # and up. For Python 3.5, asyncio.base_events.BaseEventLoop.is_running()
+            # is a close approximation; it should mostly return the same value
+            # except for brief periods when the server is starting up or shutting
+            # down. Once we drop support for Python 3.5, this branch becomes
+            # unnecessary.
+            return self.loop.is_running()
 
-        message.details = MessageDetails(
-            peer=peer,
-            mailfrom=mailfrom,
-            rcpttos=rcpttos,
-            **kwargs
-        )
-        self.outbox.append(message)
-
-    def run(self):
-        """
-        Threads run method.
-        """
-        while not self._stopevent.is_set():
-            asyncore.loop(timeout=self.WAIT_BETWEEN_CHECKS, count=1)
+    # for aiosmtpd <1.4
+    if not hasattr(aiosmtpd.controller.Controller, '_trigger_server'):
+        def start(self):
+            super().start()
+            self._set_server_socket_attributes()
 
     def stop(self, timeout=None):
         """
         Stops test server.
-
         :param timeout: When the timeout argument is present and not None, it
         should be a floating point number specifying a timeout for the
         operation in seconds (or fractions thereof).
         """
-        self._stopevent.set()
-        threading.Thread.join(self, timeout)
-        self.close()
+
+        # This mostly copies the implementation from Controller.stop(), with two
+        # differences:
+        # - It removes the assertion that the thread exists, allowing stop() to
+        #   be called more than once safely
+        # - It passes the timeout argument to Thread.join()
+        if self.loop.is_running():
+            self.loop.call_soon_threadsafe(self._stop)
+        if self._thread is not None:
+            self._thread.join(timeout)
+            self._thread = None
+        self._thread_exception = None
+        self._factory_invoked = None
+        self.server_coro = None
+        self.server = None
+        self.smtpd = None
 
     def __del__(self):
-        self.stop()
+        # This is just for backward compatibility, to preserve the behavior that
+        # the server is stopped when this object is finalized. But it seems
+        # sketchy to rely on this to stop the server. Typically, the server
+        # should be stopped "manually", before it gets deleted.
+        if self.is_alive():
+            self.stop()
 
     def __repr__(self):  # pragma: no cover
         return '<smtp.Server %s:%s>' % self.addr

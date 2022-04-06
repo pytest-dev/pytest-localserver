@@ -34,7 +34,8 @@ setup(
     packages=['pytest_localserver'],
     python_requires='>=3.5',
     install_requires=[
-        'werkzeug>=0.10'
+        'werkzeug>=0.10',
+        'aiosmtpd'
     ],
     cmdclass={'test': PyTest},
     tests_require=[
