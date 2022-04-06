@@ -16,6 +16,18 @@ import threading
 
 PY35_OR_NEWER = sys.version_info[:2] >= (3, 5)
 
+
+class MessageDetails:
+    def __init__(self, peer, mailfrom, rcpttos, *, mail_options=None, rcpt_options=None):
+        self.peer = peer
+        self.mailfrom = mailfrom
+        self.rcpttos = rcpttos
+        if mail_options:
+            self.mail_options = mail_options
+        if rcpt_options:
+            self.rcpt_options = rcpt_options
+
+
 class Server (smtpd.SMTPServer, threading.Thread):
 
     """
@@ -61,11 +73,7 @@ class Server (smtpd.SMTPServer, threading.Thread):
             message = email.message_from_string(data)
         # on the message, also set the envelope details
 
-        class Bunch:
-            def __init__(self, **kwds):
-                vars(self).update(kwds)
-
-        message.details = Bunch(
+        message.details = MessageDetails(
             peer=peer,
             mailfrom=mailfrom,
             rcpttos=rcpttos,
