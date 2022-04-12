@@ -84,7 +84,7 @@ class Server(aiosmtpd.controller.Controller):
             assert hasattr(self, 'port')
             return
 
-        self.addr = self.server.sockets[0].getsockname()
+        self.addr = self.server.sockets[0].getsockname()[:2]
 
         # Work around a bug/missing feature in aiosmtpd (https://github.com/aio-libs/aiosmtpd/issues/276)
         if self.port == 0:
