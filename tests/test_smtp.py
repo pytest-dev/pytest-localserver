@@ -39,6 +39,13 @@ def test_smtpserver_funcarg(smtpserver):
     assert smtpserver.accepting and smtpserver.addr
 
 
+def test_smtpserver_addr(smtpserver):
+    host, port = smtpserver.addr
+    assert isinstance(host, str)
+    assert isinstance(port, int)
+    assert port > 0
+
+
 def test_server_is_killed(smtpserver):
     assert smtpserver.is_alive()
     smtpserver.stop()
