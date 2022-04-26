@@ -197,6 +197,25 @@ I already have a couple of ideas for future versions:
 * making the SMTP outbox as convenient to use as ``django.core.mail.outbox``
 * add your own here!
 
+Preparing a release
+-------------------
+
+For package maintainers, here is how we release a new version:
+
+#. Ensure that the ``CHANGES`` file is up to date with the latest changes.
+#. Create a tag whose name is the `PEP 440`_-compliant version number prefixed
+   by ``v``, making sure to include at least three version number components
+   (e.g. ``v0.6.0``).
+#. Make sure that all tests pass on the tagged version.
+#. Push the tag to Github.
+#. Make a fresh clone of the repository, and in the root directory of the new
+   clone, run ``pyproject-build`` (from the `build`_ package). This will create
+   source and wheel packages under ``dist/``.
+#. Upload the source and wheel to PyPI using ``twine upload`` (see `twine`_).
+#. Using the `new release form on Github`_, prepare notes for the new release
+   following the pattern of previous releases. The "Auto-generate release notes"
+   button will be useful in summarizing the changes since the last release.
+
 ----
 
 .. [1] The idea for this project was born when I needed to check that `a piece
@@ -216,3 +235,7 @@ I already have a couple of ideas for future versions:
 .. _a piece of software: http://pypi.python.org/pypi/python-amazon-product-api/
 .. _Mailsink recipe: http://code.activestate.com/recipes/440690/
 .. _Sebastien Martini: http://code.activestate.com/recipes/442473/
+.. _PEP 440: https://peps.python.org/pep-0440/
+.. _build: https://pypa-build.readthedocs.io/en/latest/
+.. _twine: https://twine.readthedocs.io/en/stable/
+.. _new release form on Github: https://github.com/pytest-dev/pytest-localserver/releases/new
