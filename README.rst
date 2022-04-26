@@ -168,7 +168,7 @@ License and Credits
 This plugin is released under the MIT license. You can find the full text of
 the license in the LICENSE file.
 
-Copyright (C) 2010-2021 Sebastian Rahlf and others (see AUTHORS).
+Copyright (C) 2010-2022 Sebastian Rahlf and others (see AUTHORS).
 
 Some parts of this package is based on ideas or code from other people:
 
