@@ -11,7 +11,7 @@ jobs:
       matrix:
         # Not all Python versions are available for linux AND x64
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, '3.10']
+        python-version: [3.7, 3.8, 3.9, '3.10']
       fail-fast: false
 
     steps:
