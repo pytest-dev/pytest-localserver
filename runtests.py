@@ -2663,7 +2663,7 @@ import base64
 import zlib
 import imp
 
-class DictImporter(object):
+class DictImporter:
     def __init__(self, sources):
         self.sources = sources
 
@@ -2686,7 +2686,7 @@ class DictImporter(object):
 
         co = compile(s, fullname, 'exec')
         module = sys.modules.setdefault(fullname, ModuleType(fullname))
-        module.__file__ = "%s/%s" % (__file__, fullname)
+        module.__file__ = "{}/{}".format(__file__, fullname)
         module.__loader__ = self
         if is_pkg:
             module.__path__ = [fullname]
