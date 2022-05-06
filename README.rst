@@ -1,3 +1,11 @@
+.. image:: https://img.shields.io/pypi/v/pytest-localserver.svg?style=flat
+    :alt: PyPI Version
+    :target: https://pypi.python.org/pypi/pytest-django
+
+.. image:: https://img.shields.io/pypi/pyversions/pytest-localserver.svg
+    :alt: Supported Python versions
+    :target: https://pypi.python.org/pypi/pytest-django
+
 ==================
 pytest-localserver
 ==================
