@@ -120,7 +120,7 @@ class SecureContentServer (ContentServer):
         :param cert: location of file containing server certificate.
         """
 
-        super(SecureContentServer, self).__init__(host, port, ssl_context=(key, cert))
+        super().__init__(host, port, ssl_context=(key, cert))
 
 
 if __name__ == '__main__':  # pragma: no cover
