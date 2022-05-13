@@ -228,7 +228,7 @@ def _format_chunk(chunk):
     if len(r) <= 40:
         return r
     else:
-        return r[:13] + '...' + r[-14:] + ' (length {0})'.format(len(chunk))
+        return r[:13] + '...' + r[-14:] + ' (length {})'.format(len(chunk))
 
 
 def _compare_chunks(expected, actual):
