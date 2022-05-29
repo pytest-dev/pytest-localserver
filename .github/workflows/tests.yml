@@ -12,6 +12,7 @@ jobs:
         # Not all Python versions are available for linux AND x64
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         python-version: [3.5, 3.6, 3.7, 3.8, 3.9, '3.10']
+        extra: ['', '-smtp']
       fail-fast: false
 
     steps:
@@ -25,4 +26,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test with tox
-      run: tox -vv -e py
+      run: tox -vv -e py${{ matrix.extra }}
