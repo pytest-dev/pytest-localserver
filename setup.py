@@ -53,7 +53,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
 
-    keywords='pytest pytest server localhost http smtp',
+    keywords='pytest server localhost http smtp',
     classifiers=[
         'Framework :: Pytest',
         'Operating System :: OS Independent',
