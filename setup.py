@@ -27,7 +27,7 @@ setup(
     maintainer='David Zaslavsky',
     maintainer_email='diazona@ellipsix.net',
     license='MIT License',
-    description='py.test plugin to test server connections locally.',
+    description='pytest plugin to test server connections locally.',
     long_description=read('README.rst'),
     url='https://github.com/pytest-dev/pytest-localserver',
 
@@ -53,7 +53,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
 
-    keywords='py.test pytest server localhost http smtp',
+    keywords='pytest pytest server localhost http smtp',
     classifiers=[
         'Framework :: Pytest',
         'Operating System :: OS Independent',
