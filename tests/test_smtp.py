@@ -9,21 +9,21 @@ except ImportError:  # python 2?
 from pytest_localserver import plugin
 
 
-smtp = pytest.importorskip('pytest_localserver.smtp')
+smtp = pytest.importorskip("pytest_localserver.smtp")
 
 
-def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
+def send_plain_email(to, from_, subject, txt, server=("localhost", 25)):
     """
     Sends a simple plain text message via SMTP.
     """
     if type(to) in (tuple, list):
-        to = ', '.join(to)
+        to = ", ".join(to)
 
     # Create a text/plain message
     msg = MIMEText(txt)
-    msg['Subject'] = subject
-    msg['From'] = from_
-    msg['To'] = to
+    msg["Subject"] = subject
+    msg["From"] = from_
+    msg["To"] = to
 
     host, port = server[:2]
     server = smtplib.SMTP(host, port)
@@ -69,27 +69,33 @@ def test_smtpserver_has_empty_outbox_at_startup(smtpserver):
 def test_send_email(smtpserver):
     # send one e-mail
     send_plain_email(
-        'alice@example.com', 'webmaster@example.com',
-        'Your e-mail is getting there', 'Seems like this test actually works!',
-        smtpserver.addr)
+        "alice@example.com",
+        "webmaster@example.com",
+        "Your e-mail is getting there",
+        "Seems like this test actually works!",
+        smtpserver.addr,
+    )
     msg = smtpserver.outbox[-1]
-    assert msg['To'] == 'alice@example.com'
-    assert msg['From'] == 'webmaster@example.com'
-    assert msg['Subject'] == 'Your e-mail is getting there'
-    assert msg.details.rcpttos == ['alice@example.com']
+    assert msg["To"] == "alice@example.com"
+    assert msg["From"] == "webmaster@example.com"
+    assert msg["Subject"] == "Your e-mail is getting there"
+    assert msg.details.rcpttos == ["alice@example.com"]
     assert msg.details.peer
     assert msg.details.mailfrom
 
     # send another e-mail
     send_plain_email(
-        'bob@example.com', 'webmaster@example.com',
-        'His e-mail too', 'Seems like this test actually works!',
-        smtpserver.addr)
+        "bob@example.com",
+        "webmaster@example.com",
+        "His e-mail too",
+        "Seems like this test actually works!",
+        smtpserver.addr,
+    )
 
     msg = smtpserver.outbox[-1]
-    assert msg['To'] == 'bob@example.com'
-    assert msg['From'] == 'webmaster@example.com'
-    assert msg['Subject'] == 'His e-mail too'
+    assert msg["To"] == "bob@example.com"
+    assert msg["From"] == "webmaster@example.com"
+    assert msg["Subject"] == "His e-mail too"
 
     # two mails are now in outbox
     assert len(smtpserver.outbox) == 2

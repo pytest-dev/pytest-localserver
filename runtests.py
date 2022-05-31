@@ -2663,6 +2663,7 @@ import base64
 import zlib
 import imp
 
+
 class DictImporter:
     def __init__(self, sources):
         self.sources = sources
@@ -2670,21 +2671,22 @@ class DictImporter:
     def find_module(self, fullname, path=None):
         if fullname in self.sources:
             return self
-        if fullname + '.__init__' in self.sources:
+        if fullname + ".__init__" in self.sources:
             return self
         return None
 
     def load_module(self, fullname):
         # print "load_module:",  fullname
         from types import ModuleType
+
         try:
             s = self.sources[fullname]
             is_pkg = False
         except KeyError:
-            s = self.sources[fullname + '.__init__']
+            s = self.sources[fullname + ".__init__"]
             is_pkg = True
 
-        co = compile(s, fullname, 'exec')
+        co = compile(s, fullname, "exec")
         module = sys.modules.setdefault(fullname, ModuleType(fullname))
         module.__file__ = "{}/{}".format(__file__, fullname)
         module.__loader__ = self
@@ -2697,13 +2699,15 @@ class DictImporter:
     def get_source(self, name):
         res = self.sources.get(name)
         if res is None:
-            res = self.sources.get(name + '.__init__')
+            res = self.sources.get(name + ".__init__")
         return res
+
 
 if __name__ == "__main__":
     exec("def do_exec(co, loc): exec(co, loc)\n")
     import pickle
-    sources = sources.encode("ascii") # ensure bytes
+
+    sources = sources.encode("ascii")  # ensure bytes
     sources = pickle.loads(zlib.decompress(base64.decodebytes(sources)))
 
     importer = DictImporter(sources)
