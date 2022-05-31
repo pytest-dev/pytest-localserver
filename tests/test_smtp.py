@@ -1,5 +1,6 @@
-import pytest
 import smtplib
+
+import pytest
 
 try:  # python 3
     from email.mime.text import MIMEText

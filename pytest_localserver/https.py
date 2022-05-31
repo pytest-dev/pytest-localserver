@@ -2,7 +2,6 @@
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
-
 import os.path
 
 from pytest_localserver.http import ContentServer
@@ -108,7 +107,7 @@ class SecureContentServer(ContentServer):
 
     A more advanced tutorial can be found `here`_.
 
-    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt
+    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt  # noqa: E501
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 

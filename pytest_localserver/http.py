@@ -2,7 +2,6 @@
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
-
 import enum
 import itertools
 import json
@@ -11,7 +10,8 @@ import threading
 
 from werkzeug.datastructures import Headers
 from werkzeug.serving import make_server
-from werkzeug.wrappers import Response, Request
+from werkzeug.wrappers import Request
+from werkzeug.wrappers import Response
 
 
 class WSGIServer(threading.Thread):

@@ -1,8 +1,10 @@
 import itertools
+
 import pytest
 import requests
 
-from pytest_localserver import http, plugin
+from pytest_localserver import http
+from pytest_localserver import plugin
 
 
 # define test fixture here again in order to run tests without having to
@@ -36,7 +38,7 @@ def test_some_content_retrieval(httpserver):
 def test_request_is_stored(httpserver):
     httpserver.serve_content("TEST!")
     assert len(httpserver.requests) == 0
-    resp = requests.get(httpserver.url)
+    requests.get(httpserver.url)
     assert len(httpserver.requests) == 1
 
 
@@ -160,7 +162,7 @@ def test_GET_request_not_chunked(httpserver, transfer_encoding_header):
         chunked=http.Chunked.NO,
     )
     with pytest.raises(requests.exceptions.ChunkedEncodingError):
-        resp = requests.get(httpserver.url, headers={"User-Agent": "Test method"})
+        requests.get(httpserver.url, headers={"User-Agent": "Test method"})
 
 
 @pytest.mark.parametrize("chunked_flag", [http.Chunked.NO, http.Chunked.AUTO])

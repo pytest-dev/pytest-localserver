@@ -2658,10 +2658,9 @@ r1FoTUuv8ZTot8/FjauSKYrIge4HQiqMms+VDPEQvqFcqItGQt2nAq7k6KB7IK61R+qi9xLtsONY
 p2dPWv10xmXLnHQLlQrVD1yYQwb9/yTK0Oq4oxv6j0jKNxLPbTMi6d3/e5X+FyKT7kc=
 """
 
-import sys
-import base64
-import zlib
-import imp
+import sys  # noqa: E402
+import base64  # noqa: E402
+import zlib  # noqa: E402
 
 
 class DictImporter:
@@ -2693,7 +2692,7 @@ class DictImporter:
         if is_pkg:
             module.__path__ = [fullname]
 
-        do_exec(co, module.__dict__)
+        do_exec(co, module.__dict__)  # noqa: F821
         return sys.modules[fullname]
 
     def get_source(self, name):
@@ -2714,4 +2713,4 @@ if __name__ == "__main__":
     sys.meta_path.insert(0, importer)
 
     entry = "import py; raise SystemExit(py.test.cmdline.main())"
-    do_exec(entry, locals())
+    do_exec(entry, locals())  # noqa: F821

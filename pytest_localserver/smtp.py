@@ -5,10 +5,9 @@
 # SmtpMailsink Copyright 2005 Aviarc Corporation
 # Written by Adam Feuer, Matt Branthwaite, and Troy Frever
 # which is Licensed under the PSF License
+import email
 
 import aiosmtpd.controller
-import email
-import sys
 
 
 class MessageDetails:

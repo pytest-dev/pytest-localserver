@@ -1,5 +1,5 @@
-from setuptools import setup, Command
-import sys
+from setuptools import Command
+from setuptools import setup
 
 
 def read(fname):
@@ -20,7 +20,8 @@ class PyTest(Command):
         pass
 
     def run(self):
-        import sys, subprocess
+        import subprocess
+        import sys
 
         errno = subprocess.call([sys.executable, "runtests.py"])
         raise SystemExit(errno)
