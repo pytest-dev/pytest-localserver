@@ -27,7 +27,7 @@ setup(
     maintainer='David Zaslavsky',
     maintainer_email='diazona@ellipsix.net',
     license='MIT License',
-    description='py.test plugin to test server connections locally.',
+    description='pytest plugin to test server connections locally.',
     long_description=read('README.rst'),
     url='https://github.com/pytest-dev/pytest-localserver',
 
@@ -35,8 +35,12 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'werkzeug>=0.10',
-        'aiosmtpd'
     ],
+    extras_require={
+        'smtp': [
+            'aiosmtpd',
+        ],
+    },
     cmdclass={'test': PyTest},
     tests_require=[
         'pytest>=2.0.0',
@@ -49,7 +53,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
 
-    keywords='py.test pytest server localhost http smtp',
+    keywords='pytest server localhost http smtp',
     classifiers=[
         'Framework :: Pytest',
         'Operating System :: OS Independent',

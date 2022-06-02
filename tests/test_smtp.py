@@ -1,3 +1,4 @@
+import pytest
 import smtplib
 
 try:  # python 3
@@ -5,7 +6,10 @@ try:  # python 3
 except ImportError:  # python 2?
     from email.MIMEText import MIMEText
 
-from pytest_localserver import plugin, smtp
+from pytest_localserver import plugin
+
+
+smtp = pytest.importorskip('pytest_localserver.smtp')
 
 
 def send_plain_email(to, from_, subject, txt, server=('localhost', 25)):
