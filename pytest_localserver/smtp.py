@@ -5,10 +5,9 @@
 # SmtpMailsink Copyright 2005 Aviarc Corporation
 # Written by Adam Feuer, Matt Branthwaite, and Troy Frever
 # which is Licensed under the PSF License
+import email
 
 import aiosmtpd.controller
-import email
-import sys
 
 
 class MessageDetails:
@@ -30,7 +29,7 @@ class Handler:
         message = email.message_from_bytes(envelope.content)
         message.details = MessageDetails(session.peer, envelope.mail_from, envelope.rcpt_tos)
         self.outbox.append(message)
-        return '250 OK'
+        return "250 OK"
 
 
 class Server(aiosmtpd.controller.Controller):
@@ -56,7 +55,7 @@ class Server(aiosmtpd.controller.Controller):
 
     """
 
-    def __init__(self, host='localhost', port=0):
+    def __init__(self, host="localhost", port=0):
         try:
             super().__init__(Handler(), hostname=host, port=port, server_hostname=host)
         except TypeError:
@@ -79,8 +78,8 @@ class Server(aiosmtpd.controller.Controller):
         # would fail when calling super()._trigger_server(). In the future, when
         # we can safely require aiosmtpd >=1.4, this method can be inlined
         # directly into _trigger_server().
-        if hasattr(self, 'addr'):
-            assert hasattr(self, 'port')
+        if hasattr(self, "addr"):
+            assert hasattr(self, "port")
             return
 
         self.addr = self.server.sockets[0].getsockname()[:2]
@@ -111,7 +110,8 @@ class Server(aiosmtpd.controller.Controller):
             return self.loop.is_running()
 
     # for aiosmtpd <1.4
-    if not hasattr(aiosmtpd.controller.Controller, '_trigger_server'):
+    if not hasattr(aiosmtpd.controller.Controller, "_trigger_server"):
+
         def start(self):
             super().start()
             self._set_server_socket_attributes()
@@ -149,7 +149,8 @@ class Server(aiosmtpd.controller.Controller):
             self.stop()
 
     def __repr__(self):  # pragma: no cover
-        return '<smtp.Server %s:%s>' % self.addr
+        return "<smtp.Server %s:%s>" % self.addr
+
 
 if __name__ == "__main__":  # pragma: no cover
     import time
@@ -157,8 +158,8 @@ if __name__ == "__main__":  # pragma: no cover
     server = Server()
     server.start()
 
-    print('SMTP server is running on %s:%i' % server.addr)
-    print('Type <Ctrl-C> to stop')
+    print("SMTP server is running on %s:%i" % server.addr)
+    print("Type <Ctrl-C> to stop")
 
     try:
 
@@ -166,7 +167,7 @@ if __name__ == "__main__":  # pragma: no cover
             while True:
                 time.sleep(1)
         finally:
-            print('\rstopping...')
+            print("\rstopping...")
             server.stop()
 
     except KeyboardInterrupt:

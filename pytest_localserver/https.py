@@ -2,17 +2,15 @@
 #
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
-
 import os.path
 
 from pytest_localserver.http import ContentServer
 
 #: default server certificate
-DEFAULT_CERTIFICATE = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), 'server.pem')
+DEFAULT_CERTIFICATE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "server.pem")
 
 
-class SecureContentServer (ContentServer):
+class SecureContentServer(ContentServer):
 
     """
     Small test server which works just like :class:`http.Server` over HTTP::
@@ -109,12 +107,11 @@ class SecureContentServer (ContentServer):
 
     A more advanced tutorial can be found `here`_.
 
-    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt
+    .. _pytest-localserver CA: https://raw.githubusercontent.com/pytest-dev/pytest-localserver/master/pytest_localserver/ca.crt  # noqa: E501
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 
-    def __init__(self, host='localhost', port=0,
-                 key=DEFAULT_CERTIFICATE, cert=DEFAULT_CERTIFICATE):
+    def __init__(self, host="localhost", port=0, key=DEFAULT_CERTIFICATE, cert=DEFAULT_CERTIFICATE):
         """
         :param key: location of file containing the server private key.
         :param cert: location of file containing server certificate.
@@ -123,25 +120,24 @@ class SecureContentServer (ContentServer):
         super().__init__(host, port, ssl_context=(key, cert))
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
 
     import sys
     import time
 
-    print('Using certificate %s.' % DEFAULT_CERTIFICATE)
+    print("Using certificate %s." % DEFAULT_CERTIFICATE)
 
     server = SecureContentServer()
     server.start()
     server.logging = True
 
-    print('HTTPS server is running at %s' % server.url)
-    print('Type <Ctrl-C> to stop')
+    print("HTTPS server is running at %s" % server.url)
+    print("Type <Ctrl-C> to stop")
 
     try:
         path = sys.argv[1]
     except IndexError:
-        path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..', 'README.rst')
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "README.rst")
 
     server.serve_content(open(path).read(), 302)
 
@@ -149,5 +145,5 @@ if __name__ == '__main__':  # pragma: no cover
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print('\rstopping...')
+        print("\rstopping...")
     server.stop()

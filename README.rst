@@ -6,6 +6,13 @@
     :alt: Supported Python versions
     :target: https://pypi.python.org/pypi/pytest-localserver
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
+.. image:: https://results.pre-commit.ci/badge/github/pytest-dev/pytest-localserver/master.svg
+   :target: https://results.pre-commit.ci/latest/github/pytest-dev/pytest-localserver/master
+   :alt: pre-commit.ci status
+
 ==================
 pytest-localserver
 ==================
