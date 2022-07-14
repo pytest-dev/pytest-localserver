@@ -41,3 +41,8 @@ repos:
     hooks:
     -   id: pyupgrade
         args: [--py3-plus]
+
+-   repo: https://github.com/rhysd/actionlint
+    rev: v1.6.15
+    hooks:
+    -   id: actionlint-docker
