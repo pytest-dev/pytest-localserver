@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
+    if: >
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     strategy:
       matrix:
         # Not all Python versions are available for linux AND x64
