@@ -103,7 +103,7 @@ poking around in the code itself.
     * ``Chunked.YES``, telling the server to always apply chunk encoding
     * ``Chunked.NO``, telling the server to never apply chunk encoding
     * ``Chunked.AUTO``, telling the server to apply chunk encoding only if
-        the ``Transfer-Encoding`` header includes ``chunked``
+      the ``Transfer-Encoding`` header includes ``chunked``
 
     If chunk encoding is applied, each str or bytes in ``content`` becomes one
     chunk in the response.
