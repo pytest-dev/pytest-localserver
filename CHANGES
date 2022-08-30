@@ -1,3 +1,12 @@
+0.7.0 (2022-08-30)
+------------------
+
+Make smtp support an optional extra
+Update some obsolete syntax to drop support for Python 2
+Add linting for code and workflow actions using pre-commit hooks
+Expand the range of pytest versions known to be compatible, with tests
+Add badges to README
+
 0.6.0 (2022-05-05)
 ------------------
 
