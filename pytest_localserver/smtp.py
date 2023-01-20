@@ -130,7 +130,11 @@ class Server(aiosmtpd.controller.Controller):
         #   be called more than once safely
         # - It passes the timeout argument to Thread.join()
         if self.loop.is_running():
-            self.loop.call_soon_threadsafe(self.cancel_tasks)
+            try:
+                self.loop.call_soon_threadsafe(self.cancel_tasks)
+            except AttributeError:
+                # for aiosmtpd < 1.4.3
+                self.loop.call_soon_threadsafe(self._stop)
         if self._thread is not None:
             self._thread.join(timeout)
             self._thread = None
