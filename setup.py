@@ -42,7 +42,7 @@ setup(
     install_requires=["werkzeug>=0.10"],
     extras_require={
         "smtp": [
-            "aiosmtpd",
+            "aiosmtpd <1.4.3",
         ],
     },
     cmdclass={"test": PyTest},
