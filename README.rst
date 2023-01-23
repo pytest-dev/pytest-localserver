@@ -218,18 +218,26 @@ Preparing a release
 For package maintainers, here is how we release a new version:
 
 #. Ensure that the ``CHANGES`` file is up to date with the latest changes.
-#. Create a tag whose name is the `PEP 440`_-compliant version number prefixed
-   by ``v``, making sure to include at least three version number components
-   (e.g. ``v0.6.0``).
-#. Make sure that all tests pass on the tagged version.
-#. Push the tag to Github.
-#. Make a fresh clone of the repository, and in the root directory of the new
-   clone, run ``pyproject-build`` (from the `build`_ package). This will create
-   source and wheel packages under ``dist/``.
-#. Upload the source and wheel to PyPI using ``twine upload`` (see `twine`_).
-#. Using the `new release form on Github`_, prepare notes for the new release
-   following the pattern of previous releases. The "Auto-generate release notes"
-   button will be useful in summarizing the changes since the last release.
+#. Make sure that all tests pass on the version you want to release.
+#. Use the `new release form on Github`_ (or some other equivalent method) to
+   create a new release, following the pattern of previous releases.
+
+   * Each release has to be based on a tag. You can either create the tag first
+     (e.g. using ``git tag``) and then make a release from that tag, or you can
+     have Github create the tag as part of the process of making a release;
+     either way works.
+   * The tag name **must** be the `PEP 440`_-compliant version number prefixed
+     by ``v``, making sure to include at least three version number components
+     (e.g. ``v0.6.0``).
+   * The "Auto-generate release notes" button will be useful in summarizing
+     the changes since the last release.
+
+#. Using either the `release workflows page`_ or the link in the email you
+   received about a "Deployment review", go to the workflow run created for
+   the new release and click "Review deployments", then either approve or reject
+   the two deployments, one to Test PyPI and one to real PyPI. (It should not be
+   necessary to reject a deployment unless something really weird happens.)
+   Once the deployment is approved, Github will automatically upload the files.
 
 ----
 
@@ -254,3 +262,4 @@ For package maintainers, here is how we release a new version:
 .. _build: https://pypa-build.readthedocs.io/en/latest/
 .. _twine: https://twine.readthedocs.io/en/stable/
 .. _new release form on Github: https://github.com/pytest-dev/pytest-localserver/releases/new
+.. _release workflows page: https://github.com/pytest-dev/pytest-localserver/actions/workflows/release.yml
