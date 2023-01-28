@@ -1,3 +1,12 @@
+0.7.1 (2023-01-29)
+------------------
+
+Update SMTP server code to work with aiosmtpd >=1.4.3
+Fix GitHub Actions configuration for Python 3.5 and 3.6
+Add support for Python 3.11 (or at least, list it explicitly in the classifiers)
+Update the AUTHORS file
+Add a workflow to push packages to PyPI using GitHub Actions
+
 0.7.0 (2022-08-30)
 ------------------
 
