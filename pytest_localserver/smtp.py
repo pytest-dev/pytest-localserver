@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
 # with some ideas from http://code.activestate.com/recipes/440690/
 # SmtpMailsink Copyright 2005 Aviarc Corporation

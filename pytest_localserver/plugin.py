@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2011 Sebastian Rahlf <basti at redtoad dot de>
 #
 # This program is release under the MIT license. You can find the full text of
