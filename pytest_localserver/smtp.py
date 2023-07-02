@@ -154,7 +154,7 @@ class Server(aiosmtpd.controller.Controller):
         return "<smtp.Server %s:%s>" % self.addr
 
 
-if __name__ == "__main__":  # pragma: no cover
+def main():
     import time
 
     server = Server()
@@ -164,15 +164,14 @@ if __name__ == "__main__":  # pragma: no cover
     print("Type <Ctrl-C> to stop")
 
     try:
-
-        try:
-            while True:
-                time.sleep(1)
-        finally:
-            print("\rstopping...")
-            server.stop()
-
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
-        # support for Python 2.4 dictates that try ... finally is not used
-        # together with any except statements
         pass
+    finally:
+        print("\rstopping...")
+        server.stop()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()
