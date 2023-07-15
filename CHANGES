@@ -1,3 +1,10 @@
+0.8.0 (2023-07-14)
+------------------
+
+Improve deployment workflow to use trusted publishing and upload to Test PyPI first
+Remove a bunch of obsolete code
+Clean up the smtp module's driver code
+
 0.7.1 (2023-01-29)
 ------------------
 
