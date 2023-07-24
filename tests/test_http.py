@@ -1,4 +1,7 @@
 import itertools
+import subprocess
+import sys
+import textwrap
 
 import pytest
 import requests
@@ -266,3 +269,29 @@ def test_GET_request_chunked_no_content_length(httpserver, chunked_flag):
     assert resp.status_code == 200
     assert "Transfer-encoding" in resp.headers
     assert "Content-length" not in resp.headers
+
+
+def test_httpserver_init_failure_no_stderr_during_cleanup(tmp_path):
+    """
+    Test that, when the server encounters an error during __init__, its cleanup
+    does not raise an AttributeError in its __del__ method, which would emit a 
+    warning onto stderr.
+    """
+
+    script_path = tmp_path.joinpath("script.py")
+
+    script_path.write_text(textwrap.dedent("""
+        from pytest_localserver import http
+        from unittest.mock import patch
+
+        with patch("pytest_localserver.http.make_server", side_effect=RuntimeError("init failure")):
+            server = http.ContentServer()
+    """))
+
+    result = subprocess.run([sys.executable, str(script_path)], stderr=subprocess.PIPE)
+
+    # We ensure that no warning about an AttributeError is printed on stderr
+    # due to an error in the server's __del__ method. This AttributeError is
+    # raised during cleanup and doesn't affect the exit code of the script, so
+    # we can't use the exit code to tell whether the script did its job.
+    assert b"AttributeError" not in result.stderr
