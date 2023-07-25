@@ -31,7 +31,12 @@ class WSGIServer(threading.Thread):
         self.stop()
 
     def stop(self):
-        self._server.shutdown()
+        try:
+            server = self._server
+        except AttributeError:
+            pass
+        else:
+            server.shutdown()
 
     @property
     def url(self):
