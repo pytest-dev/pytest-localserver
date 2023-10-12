@@ -1,3 +1,11 @@
+0.8.1 (2023-09-23)
+------------------
+
+Ignore AttributeError when shutting down server
+Add support for Python 3.12 (or at least, list it explicitly in the classifiers)
+Update the AUTHORS file
+
+
 0.8.0 (2023-07-14)
 ------------------
 
