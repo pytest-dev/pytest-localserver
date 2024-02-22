@@ -6,8 +6,10 @@ import os.path
 
 from pytest_localserver.http import ContentServer
 
-#: default server certificate
-DEFAULT_CERTIFICATE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "server.pem")
+# default key and certificate
+_ROOT = os.path.abspath(os.path.dirname(__file__))
+DEFAULT_KEY = os.path.join(_ROOT, "server.key")
+DEFAULT_CERTIFICATE = os.path.join(_ROOT, "cert.crt")
 
 
 class SecureContentServer(ContentServer):
@@ -111,13 +113,24 @@ class SecureContentServer(ContentServer):
     .. _pyOpenSSH: https://launchpad.net/pyopenssl
     """
 
-    def __init__(self, host="localhost", port=0, key=DEFAULT_CERTIFICATE, cert=DEFAULT_CERTIFICATE):
+    def __init__(self, host="localhost", port=0, key=DEFAULT_KEY, cert=DEFAULT_CERTIFICATE):
         """
         :param key: location of file containing the server private key.
         :param cert: location of file containing server certificate.
         """
 
-        super().__init__(host, port, ssl_context=(key, cert))
+        super().__init__(host, port, ssl_context=(cert, key))
+        self._cert = cert
+
+    @property
+    def certificate(self):
+        """
+        Returns the path to the server's SSL/TLS certificate file.
+        Clients can use this path to access and verify the server's identity by incorporating the certificate.
+
+        Note: Do not rely on having a stable filesystem path for the returned certificate path across different versions or test runs.
+        """
+        return self._cert
 
 
 if __name__ == "__main__":  # pragma: no cover
