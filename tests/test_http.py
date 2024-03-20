@@ -5,6 +5,7 @@ import textwrap
 
 import pytest
 import requests
+from werkzeug.exceptions import ClientDisconnected
 
 from pytest_localserver import http
 from pytest_localserver import plugin
@@ -88,6 +89,29 @@ def test_HEAD_request(httpserver):
 #     resp = requests.post(httpserver.url, data={'data': 'value'}, headers=headers)
 #     assert resp.json() == {'data': 'value'}
 #     assert resp.status_code == 200
+
+
+def test_POST_request_no_store_data(httpserver):
+    headers = {"Content-type": "text/plain"}
+    httpserver.serve_content("TEST!", store_request_data=False)
+    requests.post(httpserver.url, data=b"testdata", headers=headers)
+
+    request = httpserver.requests[-1]
+    request.input_stream.close()
+
+    with pytest.raises(ClientDisconnected):
+        request.data
+
+
+def test_POST_request_store_data(httpserver):
+    headers = {"Content-type": "text/plain"}
+    httpserver.serve_content("TEST!", store_request_data=True)
+    requests.post(httpserver.url, data=b"testdata", headers=headers)
+
+    request = httpserver.requests[-1]
+    request.input_stream.close()
+
+    assert httpserver.requests[-1].data == b"testdata"
 
 
 @pytest.mark.parametrize("chunked_flag", [http.Chunked.YES, http.Chunked.AUTO, http.Chunked.NO])
@@ -274,19 +298,23 @@ def test_GET_request_chunked_no_content_length(httpserver, chunked_flag):
 def test_httpserver_init_failure_no_stderr_during_cleanup(tmp_path):
     """
     Test that, when the server encounters an error during __init__, its cleanup
-    does not raise an AttributeError in its __del__ method, which would emit a 
+    does not raise an AttributeError in its __del__ method, which would emit a
     warning onto stderr.
     """
 
     script_path = tmp_path.joinpath("script.py")
 
-    script_path.write_text(textwrap.dedent("""
+    script_path.write_text(
+        textwrap.dedent(
+            """
         from pytest_localserver import http
         from unittest.mock import patch
 
         with patch("pytest_localserver.http.make_server", side_effect=RuntimeError("init failure")):
             server = http.ContentServer()
-    """))
+    """
+        )
+    )
 
     result = subprocess.run([sys.executable, str(script_path)], stderr=subprocess.PIPE)
 

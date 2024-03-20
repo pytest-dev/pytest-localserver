@@ -89,12 +89,18 @@ class ContentServer(WSGIServer):
         self.compress = None
         self.requests = []
         self.chunked = Chunked.NO
+        self.store_request_data = False
 
     def __call__(self, environ, start_response):
         """
         This is the WSGI application.
         """
         request = Request(environ)
+
+        if self.store_request_data:
+            # need to invoke this method to cache the data
+            request.get_data(cache=True)
+
         self.requests.append(request)
         if (
             request.content_type == "application/x-www-form-urlencoded"
@@ -129,7 +135,7 @@ class ContentServer(WSGIServer):
 
         return response(environ, start_response)
 
-    def serve_content(self, content, code=200, headers=None, chunked=Chunked.NO):
+    def serve_content(self, content, code=200, headers=None, chunked=Chunked.NO, store_request_data=True):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
@@ -138,6 +144,7 @@ class ContentServer(WSGIServer):
         :param code: HTTP status code
         :param headers: HTTP headers to be returned
         :param chunked: whether to apply chunked transfer encoding to the content
+        :param store_request_data: whether to store data sent as request payload.
         """
         if not isinstance(content, (str, bytes, list, tuple)):
             # If content is an iterable which is not known to be a string,
@@ -153,6 +160,7 @@ class ContentServer(WSGIServer):
         self.content = content
         self.code = code
         self.chunked = chunked
+        self.store_request_data = store_request_data
         if headers:
             self.headers = Headers(headers)
 

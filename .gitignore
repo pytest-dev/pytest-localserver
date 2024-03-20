@@ -6,6 +6,7 @@ junit-*.xml
 build
 dist
 *.egg-info
+/pytest_localserver/_version.py
 
 # project files
 .idea
