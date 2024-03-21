@@ -126,9 +126,12 @@ class SecureContentServer(ContentServer):
     def certificate(self):
         """
         Returns the path to the server's SSL/TLS certificate file.
-        Clients can use this path to access and verify the server's identity by incorporating the certificate.
+        Clients can use this path to access and verify the server's identity by
+        incorporating the certificate.
 
-        Note: Do not rely on having a stable filesystem path for the returned certificate path across different versions or test runs.
+        .. note::
+            Do not rely on having a stable filesystem path for the returned
+            certificate path across different versions or test runs.
         """
         return self._cert
 
