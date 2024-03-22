@@ -46,3 +46,7 @@ repos:
     rev: v1.6.25
     hooks:
     -   id: actionlint-docker
+
+ci:
+    skip:
+    -   actionlint-docker
