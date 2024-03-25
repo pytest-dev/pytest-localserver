@@ -13,7 +13,6 @@ DEFAULT_CERTIFICATE = os.path.join(_ROOT, "cert.crt")
 
 
 class SecureContentServer(ContentServer):
-
     """
     Small test server which works just like :class:`http.Server` over HTTP::
 

@@ -31,7 +31,6 @@ class Handler:
 
 
 class Server(aiosmtpd.controller.Controller):
-
     """
     Small SMTP test server.
 
