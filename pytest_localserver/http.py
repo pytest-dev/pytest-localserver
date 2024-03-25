@@ -15,7 +15,6 @@ from werkzeug.wrappers import Response
 
 
 class WSGIServer(threading.Thread):
-
     """
     HTTP server running a WSGI application in its own thread.
     """
@@ -61,7 +60,6 @@ def _encode_chunk(chunk, charset):
 
 
 class ContentServer(WSGIServer):
-
     """
     Small test server which can be taught which content (i.e. string) to serve
     with which response code. Try the following snippet for testing API calls::
