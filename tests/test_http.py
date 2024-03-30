@@ -248,7 +248,7 @@ def _compare_chunks(expected, actual):
     __tracebackhide__ = True
     if expected != actual:
         message = [_format_chunk(expected) + " != " + _format_chunk(actual)]
-        if type(expected) == type(actual):
+        if type(expected) is type(actual):
             for i, (e, a) in enumerate(itertools.zip_longest(expected, actual, fillvalue="<end>")):
                 if e != a:
                     message += [
