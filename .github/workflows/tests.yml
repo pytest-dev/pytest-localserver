@@ -22,12 +22,6 @@ jobs:
         pytest-version: ['', '--force-dep pytest==4', '--force-dep pytest==6.2.4']
         include:
         - os: 'ubuntu-20.04'
-          python-version: '3.5'
-          pytest-version: ''
-        - os: 'ubuntu-20.04'
-          python-version: '3.5'
-          pytest-version: '--force-dep pytest==4'
-        - os: 'ubuntu-20.04'
           python-version: '3.6'
         exclude:
         - python-version: '3.10'
