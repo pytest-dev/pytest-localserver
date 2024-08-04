@@ -16,7 +16,7 @@ jobs:
         # Not all Python versions are available for linux AND x64
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         os: ['ubuntu-latest']
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12', 'pypy-3.7', 'pypy-3.8', 'pypy-3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13', 'pypy-3.7', 'pypy-3.8', 'pypy-3.9']
         extra: ['', '-smtp']
         # The forced pytest versions correspond with the lower bounds in tox.ini
         pytest-version: ['', '--force-dep pytest==4', '--force-dep pytest==6.2.4']
@@ -29,6 +29,8 @@ jobs:
         - python-version: '3.11'
           pytest-version: '--force-dep pytest==4'
         - python-version: '3.12'
+          pytest-version: '--force-dep pytest==4'
+        - python-version: '3.13'
           pytest-version: '--force-dep pytest==4'
       fail-fast: false
 
