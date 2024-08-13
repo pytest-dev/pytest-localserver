@@ -1,3 +1,15 @@
+0.9.1 (2024-08-13)
+------------------
+
+Add support for exposing server certificate
+Explicitly store request data (fixes #77)
+Make the code compliant with pre-commit hooks
+Remove unused `six` from tox config
+Drop Python 3.5 support
+Add Python 3.13 support
+Update the AUTHORS file
+
+
 0.8.1 (2023-09-23)
 ------------------
 
