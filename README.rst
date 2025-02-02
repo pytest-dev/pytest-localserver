@@ -78,8 +78,8 @@ time setting up a complex mechanism to mock or patch the underlying Python
 modules dealing with the actual HTTP request (of which there are more than one
 BTW). So what do you do?
 
-You simply use pytest's `funcargs feature`_ and simulate an entire server
-locally! :
+You simply use pytest's `fixture feature`_ and simulate an entire server
+locally!
 
 .. code:: python
 
@@ -107,10 +107,10 @@ The same thing works for SMTP servers, too:
     def test_sending_some_message(smtpserver):
         mailer = MyMailer(host=smtpserver.addr[0], port=smtpserver.addr[1])
         mailer.send(
-          to="bob@example.com",
-          from_="alice@example.com",
-          subject="MyMailer v1.0",
-          body="Check out my mailer!"
+            to="bob@example.com",
+            from_="alice@example.com",
+            subject="MyMailer v1.0",
+            body="Check out my mailer!"
         )
         assert len(smtpserver.outbox)==1
 
@@ -144,11 +144,11 @@ suggest poking around in the code itself.
     .. code:: python
 
       httpserver.serve_content(
-        content=None,
-        code=200,
-        headers=None,
-        chunked=pytest_localserver.http.Chunked.NO,
-        store_request_data=True
+          content=None,
+          code=200,
+          headers=None,
+          chunked=pytest_localserver.http.Chunked.NO,
+          store_request_data=True
       )
 
     The ``chunked`` attribute or parameter can be set to
@@ -219,7 +219,7 @@ server :
       return ["success".encode("utf-8")]
 
 
-  @pytest.yield_fixture
+  @pytest.fixture
   def testserver():
       """Server for simple_app."""
       server = WSGIServer(application=simple_app)
@@ -315,9 +315,9 @@ For package maintainers, here is how we release a new version:
        Having unsuccessfully tried to mock a server, I stumbled across
        `linkchecker`_ which uses a the same idea to test its internals.
 
-.. _monkeypatching: http://pytest.org/latest/monkeypatch.html
+.. _monkeypatching: https://docs.pytest.org/en/stable/how-to/monkeypatch.html
 .. _pytest: http://pytest.org/
-.. _funcargs feature: http://pytest.org/latest/funcargs.html
+.. _fixture feature: https://pytest.org/en/stable/explanation/fixtures.html
 .. _linkchecker: http://linkchecker.sourceforge.net/
 .. _WSGI application: http://www.python.org/dev/peps/pep-0333/
 .. _PyPI: http://pypi.python.org/pypi/pytest-localserver/
