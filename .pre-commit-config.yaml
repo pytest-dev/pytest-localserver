@@ -37,13 +37,13 @@ repos:
         args: [--py3-plus]
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.0
+    rev: v3.19.1
     hooks:
     -   id: pyupgrade
         args: [--py3-plus]
 
 -   repo: https://github.com/rhysd/actionlint
-    rev: v1.7.4
+    rev: v1.7.7
     hooks:
     -   id: actionlint-docker
 
