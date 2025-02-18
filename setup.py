@@ -38,7 +38,7 @@ setup(
     long_description=read("README.rst"),
     url="https://github.com/pytest-dev/pytest-localserver",
     packages=["pytest_localserver"],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=["werkzeug>=0.10"],
     extras_require={
         "smtp": [
@@ -59,7 +59,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
