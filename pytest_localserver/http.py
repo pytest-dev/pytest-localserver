@@ -56,7 +56,7 @@ class Chunked(enum.Enum):
 def _encode_chunk(chunk, charset):
     if isinstance(chunk, str):
         chunk = chunk.encode(charset)
-    return "{:x}".format(len(chunk)).encode(charset) + b"\r\n" + chunk + b"\r\n"
+    return f"{len(chunk):x}".encode(charset) + b"\r\n" + chunk + b"\r\n"
 
 
 class ContentServer(WSGIServer):
