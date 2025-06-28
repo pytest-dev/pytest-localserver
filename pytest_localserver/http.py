@@ -5,7 +5,6 @@
 import enum
 import itertools
 import json
-import sys
 import threading
 
 from werkzeug.datastructures import Headers
@@ -161,29 +160,3 @@ class ContentServer(WSGIServer):
         self.store_request_data = store_request_data
         if headers:
             self.headers = Headers(headers)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    import os.path
-    import time
-
-    app = ContentServer()
-    server = WSGIServer(application=app)
-    server.start()
-
-    print("HTTP server is running at %s" % server.url)
-    print("Type <Ctrl-C> to stop")
-
-    try:
-        path = sys.argv[1]
-    except IndexError:
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "README.rst")
-
-    app.serve_content(open(path).read(), 302)
-
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\rstopping...")
-    server.stop()
