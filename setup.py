@@ -1,4 +1,3 @@
-from setuptools import Command
 from setuptools import setup
 
 
@@ -8,23 +7,6 @@ def read(fname):
 
     _here = os.path.abspath(os.path.dirname(__file__))
     return open(os.path.join(_here, fname)).read()
-
-
-class PyTest(Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        import subprocess
-        import sys
-
-        errno = subprocess.call([sys.executable, "runtests.py"])
-        raise SystemExit(errno)
 
 
 setup(
@@ -45,7 +27,6 @@ setup(
             "aiosmtpd",
         ],
     },
-    cmdclass={"test": PyTest},
     tests_require=["pytest>=2.0.0", "requests"],
     entry_points={"pytest11": ["localserver = pytest_localserver.plugin"]},
     zip_safe=False,
