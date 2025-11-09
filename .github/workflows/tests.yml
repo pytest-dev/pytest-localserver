@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: 'Python runtime ${{ matrix.versions.python }}'
     runs-on: '${{ matrix.versions.os || matrix.os }}'
     # https://wildwolf.name/github-actions-how-to-avoid-running-the-same-workflow-multiple-times/
     if: >
@@ -42,8 +43,6 @@ jobs:
           min-deps: '--force-dep pytest==4.6'
         - python: 'pypy-3.9'
           min-deps: '--force-dep pytest==4.6'
-        force-min-deps: [false, true]
-        extra: ['', '-smtp']
       fail-fast: false
 
     steps:
@@ -58,4 +57,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test with tox
-      run: tox -vv -e py${{ matrix.extra }} ${{ matrix.force-min-deps && matrix.versions.min-deps || '' }}
+      run: tox -vv -e py,py-smtp
+    - name: Test with tox with forced minimum dependencies
+      if: matrix.versions.min-deps
+      run: tox -vv -e py,py-smtp ${{ matrix.versions.min-deps }}
