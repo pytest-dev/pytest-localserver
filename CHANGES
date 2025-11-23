@@ -1,3 +1,18 @@
+0.10.0 (2025-11-24)
+-------------------
+
+Clarify examples in README
+Drop Python 3.6 support
+Add Python 3.14 support
+Add pytest 9 support
+Consolidate tests
+Remove obsolete driver code in some modules
+Remove obsolete PyTest command from setup.py
+Switch to PEP-639 compliant license metadata
+Update outdated GitHub Action versions
+Add a summary GitHub Action job
+Update the AUTHORS file
+
 0.9.0.post0 (2024-10-05)
 ------------------------
 
