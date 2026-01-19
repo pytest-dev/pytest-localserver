@@ -4,7 +4,6 @@ import requests
 from pytest_localserver import https
 from pytest_localserver import plugin
 
-
 # define test fixture here again in order to run tests without having to
 # install the plugin anew every single time
 httpsserver = plugin.httpsserver

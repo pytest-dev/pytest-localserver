@@ -9,7 +9,6 @@ except ImportError:  # python 2?
 
 from pytest_localserver import plugin
 
-
 smtp = pytest.importorskip("pytest_localserver.smtp")
 
 
