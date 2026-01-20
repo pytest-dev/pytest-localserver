@@ -10,7 +10,6 @@ from werkzeug.exceptions import ClientDisconnected
 from pytest_localserver import http
 from pytest_localserver import plugin
 
-
 # define test fixture here again in order to run tests without having to
 # install the plugin anew every single time
 httpserver = plugin.httpserver
@@ -304,17 +303,13 @@ def test_httpserver_init_failure_no_stderr_during_cleanup(tmp_path):
 
     script_path = tmp_path.joinpath("script.py")
 
-    script_path.write_text(
-        textwrap.dedent(
-            """
+    script_path.write_text(textwrap.dedent("""
         from pytest_localserver import http
         from unittest.mock import patch
 
         with patch("pytest_localserver.http.make_server", side_effect=RuntimeError("init failure")):
             server = http.ContentServer()
-    """
-        )
-    )
+    """))
 
     result = subprocess.run([sys.executable, str(script_path)], stderr=subprocess.PIPE)
 
