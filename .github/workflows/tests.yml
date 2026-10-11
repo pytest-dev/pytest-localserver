@@ -45,6 +45,12 @@ jobs:
           min-deps: '--force-dep pytest==4.6'
         - python: 'pypy-3.9'
           min-deps: '--force-dep pytest==4.6'
+        - python: 'pypy-3.10'
+          min-deps: '--force-dep pytest==6.2.4'
+        - python: 'pypy-3.11'
+          min-deps: '--force-dep pytest==6.2.4'
+        - python: 'pypy-3.12'
+          min-deps: '--force-dep pytest==6.2.4'
       fail-fast: false
 
     steps:
