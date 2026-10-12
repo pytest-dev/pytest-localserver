@@ -36,6 +36,8 @@ jobs:
           min-deps: '--force-dep pytest==6.2.4'
         - python: '3.14'
           min-deps: '--force-dep pytest==7.3.2'
+        - python: '3.15'
+          min-deps: '--force-dep pytest==7.3.2'
         - python: 'pypy-3.7'
           min-deps: '--force-dep pytest==4.6'
           os: 'ubuntu-22.04'
@@ -43,6 +45,12 @@ jobs:
           min-deps: '--force-dep pytest==4.6'
         - python: 'pypy-3.9'
           min-deps: '--force-dep pytest==4.6'
+        - python: 'pypy-3.10'
+          min-deps: '--force-dep pytest==6.2.4'
+        - python: 'pypy-3.11'
+          min-deps: '--force-dep pytest==6.2.4'
+        - python: 'pypy-3.12'
+          min-deps: '--force-dep pytest==6.2.4'
       fail-fast: false
 
     steps:
