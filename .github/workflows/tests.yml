@@ -54,9 +54,9 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7.0.1
     - name: Set up Python ${{ matrix.versions.python }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7.0.0
       with:
         python-version: ${{ matrix.versions.python }}
         allow-prereleases: true
@@ -77,6 +77,6 @@ jobs:
     - build
     steps:
     - name: Summarize job statuses
-      uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe
+      uses: re-actors/alls-green@v1.3.0
       with:
         jobs: ${{ toJSON(needs) }}
