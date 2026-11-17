@@ -1,6 +1,59 @@
 [build-system]
-requires = ["setuptools >=42", "setuptools_scm[toml] >=3.4.1"]
+requires = ["setuptools >=77", "setuptools_scm[toml] >=3.4.1"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytest-localserver"
+dynamic = ["version"]
+description = "pytest plugin to test server connections locally."
+readme = "README.rst"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    {name = "Sebastian Rahlf", email = "basti@redtoad.de"},
+]
+maintainers = [
+    {name = "David Zaslavsky", email = "diazona@ellipsix.net"},
+]
+requires-python = ">=3.7"
+keywords = ["pytest", "server", "localhost", "http", "smtp"]
+classifiers = [
+    "Framework :: Pytest",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "werkzeug>=0.10",
+]
+
+[project.optional-dependencies]
+smtp = [
+    "aiosmtpd",
+]
+
+[project.urls]
+Homepage = "https://github.com/pytest-dev/pytest-localserver"
+
+[project.entry-points.pytest11]
+localserver = "pytest_localserver.plugin"
+
+[tool.setuptools]
+packages = ["pytest_localserver"]
+include-package-data = true
+zip-safe = false
 
 [tool.setuptools_scm]
 write_to = "pytest_localserver/_version.py"
