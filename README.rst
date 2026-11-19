@@ -135,6 +135,7 @@ suggest poking around in the code itself.
     * ``content`` - content of next response (str, bytes, or iterable of either)
     * ``headers`` - response headers (dict)
     * ``chunked`` - whether to chunk-encode the response (enumeration)
+    * ``compress`` - whether to gzip-compress the response
     * ``store_request_data`` - whether to store request data for later use
 
     Once these attributes are set, all subsequent requests will be answered with
@@ -148,7 +149,8 @@ suggest poking around in the code itself.
           code=200,
           headers=None,
           chunked=pytest_localserver.http.Chunked.NO,
-          store_request_data=True
+          store_request_data=True,
+          compress=None
       )
 
     The ``chunked`` attribute or parameter can be set to
@@ -160,6 +162,10 @@ suggest poking around in the code itself.
 
     If chunk encoding is applied, each str or bytes in ``content`` becomes one
     chunk in the response.
+
+    If ``compress`` is set to ``'gzip'`` or ``True``, the response body is
+    gzip-compressed and sent with a ``Content-Encoding: gzip`` header, but only
+    when the request's ``Accept-Encoding`` header allows gzip.
 
     You can use ``store_request_data=False`` to disable loading the request data into
     memory. This will make it impossible to check the request data using
