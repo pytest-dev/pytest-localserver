@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >=77", "setuptools_scm[toml] >=3.4.1"]
+requires = ["setuptools>=77", "setuptools-scm>=10"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -15,7 +15,7 @@ authors = [
 maintainers = [
     {name = "David Zaslavsky", email = "diazona@ellipsix.net"},
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 keywords = ["pytest", "server", "localhost", "http", "smtp"]
 classifiers = [
     "Framework :: Pytest",
@@ -24,9 +24,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -56,8 +53,9 @@ include-package-data = true
 zip-safe = false
 
 [tool.setuptools_scm]
-write_to = "pytest_localserver/_version.py"
+version_file = "pytest_localserver/_version.py"
+write_to_source = true
 
 [tool.black]
-target-version = ['py37']
+target-version = ['py310']
 line-length = 120
