@@ -3,6 +3,7 @@
 # This program is release under the MIT license. You can find the full text of
 # the license in the LICENSE file.
 import enum
+import gzip
 import itertools
 import json
 import threading
@@ -58,6 +59,19 @@ def _encode_chunk(chunk, charset):
     return f"{len(chunk):x}".encode(charset) + b"\r\n" + chunk + b"\r\n"
 
 
+def _as_bytes(content, charset="utf-8"):
+    if isinstance(content, str):
+        return content.encode(charset)
+    if isinstance(content, bytes):
+        return content
+    return b"".join(item.encode(charset) if isinstance(item, str) else item for item in content)
+
+
+def _accepts_gzip(request):
+    encodings = request.accept_encodings
+    return encodings.quality("gzip") > 0 or encodings.quality("x-gzip") > 0
+
+
 class ContentServer(WSGIServer):
     """
     Small test server which can be taught which content (i.e. string) to serve
@@ -108,9 +122,14 @@ class ContentServer(WSGIServer):
         else:
             content = self.content
 
-        if self.chunked == Chunked.YES or (
+        compressed = self.compress in (True, "gzip") and _accepts_gzip(request)
+        if compressed:
+            content = gzip.compress(_as_bytes(content))
+
+        chunked = self.chunked == Chunked.YES or (
             self.chunked == Chunked.AUTO and "chunked" in self.headers.get("Transfer-encoding", "")
-        ):
+        )
+        if chunked:
             # If the code below ever changes to allow setting the charset of
             # the Response object, the charset used here should also be changed
             # to match. But until that happens, use UTF-8 since it is Werkzeug's
@@ -125,14 +144,16 @@ class ContentServer(WSGIServer):
         response.headers.clear()
         response.headers.extend(self.headers)
 
-        # FIXME get compression working!
-        # if self.compress == 'gzip':
-        #     content = gzip.compress(content.encode('utf-8'))
-        #     response.content_encoding = 'gzip'
+        if compressed:
+            response.content_encoding = "gzip"
+            if not chunked:
+                response.content_length = len(content)
 
         return response(environ, start_response)
 
-    def serve_content(self, content, code=200, headers=None, chunked=Chunked.NO, store_request_data=True):
+    def serve_content(
+        self, content, code=200, headers=None, chunked=Chunked.NO, store_request_data=True, compress=None
+    ):
         """
         Serves string content (with specified HTTP error code) as response to
         all subsequent request.
@@ -142,6 +163,8 @@ class ContentServer(WSGIServer):
         :param headers: HTTP headers to be returned
         :param chunked: whether to apply chunked transfer encoding to the content
         :param store_request_data: whether to store data sent as request payload.
+        :param compress: set to ``'gzip'`` or ``True`` to gzip-compress the response
+            when the client accepts it
         """
         if not isinstance(content, (str, bytes, list, tuple)):
             # If content is an iterable which is not known to be a string,
@@ -158,5 +181,6 @@ class ContentServer(WSGIServer):
         self.code = code
         self.chunked = chunked
         self.store_request_data = store_request_data
+        self.compress = compress
         if headers:
             self.headers = Headers(headers)
