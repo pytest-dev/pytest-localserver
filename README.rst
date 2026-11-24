@@ -281,6 +281,33 @@ I already have a couple of ideas for future versions:
 * making the SMTP outbox as convenient to use as ``django.core.mail.outbox``
 * add your own here!
 
+AI/LLM-Assisted Contributions Policy
+------------------------------------
+
+For consistency, we have adopted the `pytest LLM policy`_ except that
+attribution is mandatory. pytest's LLM policy generally allows developers to
+include LLM-generated code in their contributions, as long as they understand
+what they're contributing and take responsibility for it in the same way as if
+they had written it themselves. In particular, taking responsibility for
+a contribution means that the human developer needs to check and understand
+LLM-generated contributions _before_ submitting them as a PR, and the human
+developer must be the one to respond to questions from maintainers and
+participate in the process of getting the PR ready to merge.
+
+Again, for ``pytest-localserver`` we have an extra requirement that disclosing
+the use of AI tools is mandatory. We ask that it be done in a specific way:
+
+* Use a commit trailer that identifies the model and harness in each commit
+  that includes LLM-generated content. We recommend ``Assisted-by``, with
+  a format like this::
+
+    Assisted-by: Claude Code 2.1.310-325 with Opus 5
+    Assisted-by: OpenCode 2.2.5 with Sonnet 5.6 and gpt-5.4
+
+  A ``Co-authored-by`` trailer that includes the same information is also
+  acceptable.
+* Mention in the PR description that you used AI tools, just for visibility.
+
 Preparing a release
 -------------------
 
@@ -332,3 +359,4 @@ For package maintainers, here is how we release a new version:
 .. _twine: https://twine.readthedocs.io/en/stable/
 .. _new release form on Github: https://github.com/pytest-dev/pytest-localserver/releases/new
 .. _release workflows page: https://github.com/pytest-dev/pytest-localserver/actions/workflows/release.yml
+.. _pytest LLM policy: https://github.com/pytest-dev/pytest/blob/main/CONTRIBUTING.rst#aillm-assisted-contributions-policy
