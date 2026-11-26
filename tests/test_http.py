@@ -1,3 +1,4 @@
+import gzip
 import itertools
 import subprocess
 import sys
@@ -53,19 +54,45 @@ def test_GET_request(httpserver):
     assert "text/plain" in resp.headers["Content-type"]
 
 
-# FIXME get compression working!
-# def test_gzipped_GET_request(httpserver):
-#     httpserver.serve_content('TEST!', headers={'Content-type': 'text/plain'})
-#     httpserver.compress = 'gzip'
-#     resp = requests.get(httpserver.url, headers={
-#         'User-Agent': 'Test method',
-#         'Accept-encoding': 'gzip'
-#     })
-#     assert resp.text == 'TEST!'
-#     assert resp.status_code == 200
-#     assert resp.content_encoding == 'gzip'
-#     assert resp.headers['Content-type'] == 'text/plain'
-#     assert resp.headers['content-encoding'] == 'gzip'
+def test_gzipped_GET_request(httpserver):
+    httpserver.serve_content("TEST!", headers={"Content-type": "text/plain"}, compress=http.Compression.GZIP)
+    resp = requests.get(httpserver.url, headers={"User-Agent": "Test method", "Accept-Encoding": "gzip"})
+    assert resp.text == "TEST!"
+    assert resp.status_code == 200
+    assert "text/plain" in resp.headers["Content-type"]
+    assert resp.headers["content-encoding"] == "gzip"
+    assert resp.headers["Content-Length"] == str(len(gzip.compress(b"TEST!")))
+
+
+def test_gzipped_GET_request_via_attribute(httpserver):
+    httpserver.serve_content("TEST!", headers={"Content-type": "text/plain"})
+    httpserver.compress = http.Compression.GZIP
+    resp = requests.get(httpserver.url, headers={"User-Agent": "Test method", "Accept-Encoding": "gzip"})
+    assert resp.text == "TEST!"
+    assert resp.headers["content-encoding"] == "gzip"
+    assert resp.headers["Content-Length"] == str(len(gzip.compress(b"TEST!")))
+
+
+def test_gzipped_GET_request_bytes_content(httpserver):
+    httpserver.serve_content(b"TEST!", headers={"Content-type": "text/plain"}, compress=http.Compression.GZIP)
+    resp = requests.get(httpserver.url, headers={"Accept-Encoding": "gzip"})
+    assert resp.content == b"TEST!"
+    assert resp.headers["content-encoding"] == "gzip"
+
+
+def test_gzip_not_applied_without_accept_encoding(httpserver):
+    httpserver.serve_content("TEST!", headers={"Content-type": "text/plain"}, compress=http.Compression.GZIP)
+    resp = requests.get(httpserver.url, headers={"User-Agent": "Test method", "Accept-Encoding": "identity"})
+    assert resp.text == "TEST!"
+    assert resp.status_code == 200
+    assert "content-encoding" not in resp.headers
+
+
+def test_gzip_not_applied_by_default(httpserver):
+    httpserver.serve_content("TEST!", headers={"Content-type": "text/plain"})
+    resp = requests.get(httpserver.url, headers={"Accept-Encoding": "gzip"})
+    assert resp.text == "TEST!"
+    assert "content-encoding" not in resp.headers
 
 
 def test_HEAD_request(httpserver):
